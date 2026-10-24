@@ -2,22 +2,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 
 namespace CircleSearch.Services;
 
 public static class GoogleLensService
 {
-    private static readonly HttpClient HttpClient = new(new HttpClientHandler
-    {
-        AllowAutoRedirect = false
-    })
-    {
-        Timeout = TimeSpan.FromSeconds(15)
-    };
-
     public static byte[] ConvertToOptimizedJpeg(byte[] pngBytes, long quality = 90L)
     {
         try
@@ -36,7 +26,7 @@ public static class GoogleLensService
                 bmp.Save(msOut, jpegEncoder, encoderParams);
                 return msOut.ToArray();
             }
-            
+
             bmp.Save(msOut, ImageFormat.Jpeg);
             return msOut.ToArray();
         }
@@ -60,6 +50,7 @@ public static class GoogleLensService
 
         var loadingText = LocalizationService.T("overlay.lens_loading");
 
+        // Прямой POST на официальный эндпоинт загрузки Google Lens из контекста самого браузера!
         return $$"""
 <!DOCTYPE html>
 <html lang="{{hl}}">
@@ -154,73 +145,32 @@ public static class GoogleLensService
         return htmlPath;
     }
 
-    public static async Task OpenInExternalBrowserAsync(byte[] imageBytes)
+    public static Task OpenInExternalBrowserAsync(byte[] imageBytes)
     {
-        try
-        {
-            var targetUrl = await UploadViaChromeLensEndpointAsync(imageBytes).ConfigureAwait(false);
-            if (!string.IsNullOrWhiteSpace(targetUrl))
-            {
-                Infrastructure.AppLogger.Info("Opening Google Lens URL in external browser", new { Url = targetUrl });
-                OpenBrowserUrl(targetUrl);
-                return;
-            }
-        }
-        catch (Exception ex)
-        {
-            Infrastructure.AppLogger.Warning($"Direct Lens ccm upload failed: {ex.Message}");
-        }
-
+        // ВАЖНО: Google Lens связывает сессию поиска исключительно с тем браузером,
+        // который загрузил изображение (его cookies, сессия аккаунта, IP, TLS-отпечаток).
+        // Поэтому загрузку ДОЛЖЕН выполнять сам браузер пользователя через форму автоотправки,
+        // а не фоновый процесс HttpClient приложения!
         var jpegBytes = ConvertToOptimizedJpeg(imageBytes, 88L);
-        var fallbackHtml = WriteTempAutoSubmitHtmlFile(jpegBytes, isJpeg: true);
-        OpenBrowserUrl(fallbackHtml);
+        var uploadHtmlPath = WriteTempAutoSubmitHtmlFile(jpegBytes, isJpeg: true);
+
+        OpenBrowserFileOrUrl(uploadHtmlPath);
+        return Task.CompletedTask;
     }
 
-    public static async Task<string?> UploadViaChromeLensEndpointAsync(byte[] imageBytes)
+    public static void OpenBrowserFileOrUrl(string filePathOrUrl)
     {
-        var hl = Domain.ConfigManager.Current.UiLanguage;
-        if (string.IsNullOrWhiteSpace(hl) || hl.Equals("auto", StringComparison.OrdinalIgnoreCase))
-        {
-            hl = LocalizationService.CurrentLanguage;
-        }
-
-        var uploadUri = $"https://lens.google.com/upload?ep=ccm&s=&hl={hl}";
-
-        using var request = new HttpRequestMessage(HttpMethod.Post, uploadUri);
-        request.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
-
-        var jpegBytes = ConvertToOptimizedJpeg(imageBytes, 88L);
-
-        using var content = new MultipartFormDataContent("----WebKitFormBoundaryCircleSearch");
-        var imageContent = new ByteArrayContent(jpegBytes);
-        imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
-        content.Add(imageContent, "encoded_image", "image.jpg");
-
-        request.Content = content;
-
-        using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-        if (response.Headers.Location != null)
-        {
-            return response.Headers.Location.ToString();
-        }
-
-        return null;
-    }
-
-    public static void OpenBrowserUrl(string urlOrPath)
-    {
-        // 1. Попытка открыть в Google Chrome напрямую (если установлен), так как Google Lens родной для Chrome
+        // 1. Сначала пытаемся запустить в установленном Google Chrome (родной браузер для Lens)
         try
         {
-            var chromeKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe");
-            var chromePath = chromeKey?.GetValue("") as string;
-            if (!string.IsNullOrWhiteSpace(chromePath) && File.Exists(chromePath))
+            using var chromeKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe");
+            var chromeExe = chromeKey?.GetValue("") as string;
+            if (!string.IsNullOrWhiteSpace(chromeExe) && File.Exists(chromeExe))
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = chromePath,
-                    Arguments = $"\"{urlOrPath}\"",
+                    FileName = chromeExe,
+                    Arguments = $"\"{filePathOrUrl}\"",
                     UseShellExecute = false
                 });
                 return;
@@ -231,12 +181,12 @@ public static class GoogleLensService
             Infrastructure.AppLogger.Warning($"Failed to start Chrome directly: {ex.Message}");
         }
 
-        // 2. Системный браузер по умолчанию через ShellExecute
+        // 2. Иначе открываем системный браузер по умолчанию через ShellExecute
         try
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = urlOrPath,
+                FileName = filePathOrUrl,
                 UseShellExecute = true
             });
         }
