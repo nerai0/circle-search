@@ -64,7 +64,16 @@ public sealed class App : System.Windows.Application
         try
         {
             ConfigManager.Load();
-            LocalizationService.CurrentLanguage = ConfigManager.Current.UiLanguage;
+            var configuredLang = ConfigManager.Current.UiLanguage;
+            if (string.IsNullOrWhiteSpace(configuredLang) || configuredLang.Equals("auto", StringComparison.OrdinalIgnoreCase))
+            {
+                LocalizationService.CurrentLanguage = LocalizationService.DetectSystemLanguage();
+            }
+            else
+            {
+                LocalizationService.CurrentLanguage = configuredLang;
+            }
+
             ThemeManager.ApplyTheme(ConfigManager.Current.Theme);
 
             InitializeTrayIcon();

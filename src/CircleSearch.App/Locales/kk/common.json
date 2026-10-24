@@ -28,5 +28,6 @@
   "settings.save": "Сақтау",
   "settings.cancel": "Болдырмау",
   "tray.ready_title": "CircleSearch іске қосылды",
-  "tray.ready_tip": "Экраннан іздеу үшін Win пернесін ұстап тұрыңыз немесе Alt+Space басыңыз."
+  "tray.ready_tip": "Экраннан іздеу үшін Win пернесін ұстап тұрыңыз немесе Alt+Space басыңыз.",
+  "settings.lang_auto": "Жүйе тілі (Автоматты)"
 }

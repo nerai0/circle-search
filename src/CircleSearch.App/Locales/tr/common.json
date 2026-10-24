@@ -28,5 +28,6 @@
   "settings.save": "Kaydet",
   "settings.cancel": "İptal",
   "tray.ready_title": "CircleSearch Hazır",
-  "tray.ready_tip": "Ekranda arama yapmak için Win tuşunu basılı tutun veya Alt+Space tuşlayın."
+  "tray.ready_tip": "Ekranda arama yapmak için Win tuşunu basılı tutun veya Alt+Space tuşlayın.",
+  "settings.lang_auto": "Sistem Varsayılanı (Otomatik)"
 }

@@ -80,9 +80,15 @@ public sealed class SettingsWindow : Window
 
         var formStack = new WpfControls.StackPanel();
 
-        // 1. Language selector
+        // 1. Language selector with "auto" at top
         formStack.Children.Add(CreateLabel(LocalizationService.T("settings.ui_lang_label")));
-        _uiLangCombo = CreateCombo(LocalizationService.SupportedLanguages, ConfigManager.Current.UiLanguage);
+        var langOptions = new List<(string Key, string Label)>
+        {
+            ("auto", LocalizationService.T("settings.lang_auto"))
+        };
+        langOptions.AddRange(LocalizationService.SupportedLanguages.Select(l => (l.Code, l.NativeName)));
+
+        _uiLangCombo = CreateCombo(langOptions.ToArray(), ConfigManager.Current.UiLanguage);
         formStack.Children.Add(_uiLangCombo);
 
         // 2. Target Monitor Mode
@@ -198,7 +204,14 @@ public sealed class SettingsWindow : Window
         if (_uiLangCombo.SelectedValue is string uiLang)
         {
             ConfigManager.Current.UiLanguage = uiLang;
-            LocalizationService.CurrentLanguage = uiLang;
+            if (uiLang.Equals("auto", StringComparison.OrdinalIgnoreCase))
+            {
+                LocalizationService.CurrentLanguage = LocalizationService.DetectSystemLanguage();
+            }
+            else
+            {
+                LocalizationService.CurrentLanguage = uiLang;
+            }
         }
 
         if (_themeCombo.SelectedValue is string theme)

@@ -28,5 +28,6 @@
   "settings.save": "保存",
   "settings.cancel": "取消",
   "tray.ready_title": "CircleSearch 已就绪",
-  "tray.ready_tip": "长按 Win 键或按 Alt+Space 开始屏幕搜索。"
+  "tray.ready_tip": "长按 Win 键或按 Alt+Space 开始屏幕搜索。",
+  "settings.lang_auto": "跟随系统 (自动)"
 }

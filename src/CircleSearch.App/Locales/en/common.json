@@ -28,5 +28,6 @@
   "settings.save": "Save",
   "settings.cancel": "Cancel",
   "tray.ready_title": "CircleSearch is Ready",
-  "tray.ready_tip": "Hold Windows key or press Alt+Space to search anything on screen."
+  "tray.ready_tip": "Hold Windows key or press Alt+Space to search anything on screen.",
+  "settings.lang_auto": "System Default (Auto)"
 }

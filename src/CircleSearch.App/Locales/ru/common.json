@@ -28,5 +28,6 @@
   "settings.save": "Сохранить",
   "settings.cancel": "Отмена",
   "tray.ready_title": "CircleSearch активен",
-  "tray.ready_tip": "Зажмите клавишу Win или нажмите Alt+Space для поиска по экрану."
+  "tray.ready_tip": "Зажмите клавишу Win или нажмите Alt+Space для поиска по экрану.",
+  "settings.lang_auto": "Как в системе (Авто)"
 }

@@ -28,5 +28,6 @@
   "settings.save": "Speichern",
   "settings.cancel": "Abbrechen",
   "tray.ready_title": "CircleSearch ist bereit",
-  "tray.ready_tip": "Halten Sie die Win-Taste gedrückt oder drücken Sie Alt+Space zur Suche."
+  "tray.ready_tip": "Halten Sie die Win-Taste gedrückt oder drücken Sie Alt+Space zur Suche.",
+  "settings.lang_auto": "Systemstandard (Auto)"
 }

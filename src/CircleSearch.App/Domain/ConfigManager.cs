@@ -1,12 +1,14 @@
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using CircleSearch.Services;
 
 namespace CircleSearch.Domain;
 
 public sealed class AppSettings
 {
-    public string UiLanguage { get; set; } = "kk";
+    // "auto" (по умолчанию — автоопределение по языку системы) либо конкретный код языка ("en", "kk", "ru"...)
+    public string UiLanguage { get; set; } = "auto";
     public string Theme { get; set; } = "Dark";
     public int LongPressMs { get; set; } = 400;
     public bool EnableWinHold { get; set; } = true;
@@ -46,6 +48,8 @@ public static class ConfigManager
                 {
                     if (string.IsNullOrWhiteSpace(loaded.TargetMonitorMode))
                         loaded.TargetMonitorMode = "Cursor";
+                    if (string.IsNullOrWhiteSpace(loaded.UiLanguage))
+                        loaded.UiLanguage = "auto";
                     _current = loaded;
                 }
             }
@@ -78,24 +82,31 @@ public static class ConfigManager
                     var idx = line.IndexOf('=');
                     if (idx <= 0) continue;
 
-                    var key = line[..idx].Trim();
-                    var val = line[(idx + 1)..].Trim().Trim('"', '\'');
+                    var key = line.Substring(0, idx).Trim();
+                    var val = line.Substring(idx + 1).Trim().Trim('"', '\'');
 
-                    if (key.Equals("DEFAULT_LANGUAGE", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(val))
-                        _current.UiLanguage = val;
-                    else if (key.Equals("DEFAULT_THEME", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(val))
-                        _current.Theme = val;
-                    else if (key.Equals("LONG_PRESS_MS", StringComparison.OrdinalIgnoreCase) && int.TryParse(val, out var ms) && ms >= 200)
-                        _current.LongPressMs = ms;
-                    else if (key.Equals("TARGET_MONITOR_MODE", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(val))
-                        _current.TargetMonitorMode = val;
+                    switch (key.ToUpperInvariant())
+                    {
+                        case "LONG_PRESS_MS":
+                            if (int.TryParse(val, out var ms)) _current.LongPressMs = ms;
+                            break;
+                        case "THEME":
+                            _current.Theme = val;
+                            break;
+                        case "TARGET_MONITOR_MODE":
+                            _current.TargetMonitorMode = val;
+                            break;
+                        case "UI_LANGUAGE":
+                            _current.UiLanguage = val;
+                            break;
+                    }
                 }
                 break;
             }
         }
         catch (Exception ex)
         {
-            Infrastructure.AppLogger.Error("Failed to read .env", ex);
+            Infrastructure.AppLogger.Error("Failed to parse .env", ex);
         }
     }
 
@@ -103,7 +114,8 @@ public static class ConfigManager
     {
         try
         {
-            var json = JsonSerializer.Serialize(_current, new JsonSerializerOptions { WriteIndented = true });
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var json = JsonSerializer.Serialize(_current, options);
             File.WriteAllText(ConfigFilePath, json, Encoding.UTF8);
             SettingsChanged?.Invoke();
         }

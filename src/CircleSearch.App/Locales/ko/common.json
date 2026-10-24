@@ -28,5 +28,6 @@
   "settings.save": "저장",
   "settings.cancel": "취소",
   "tray.ready_title": "CircleSearch 준비됨",
-  "tray.ready_tip": "화면 검색을 시작하려면 Win 키를 길게 누르거나 Alt+Space를 누르세요."
+  "tray.ready_tip": "화면 검색을 시작하려면 Win 키를 길게 누르거나 Alt+Space를 누르세요.",
+  "settings.lang_auto": "시스템 기본값 (자동)"
 }

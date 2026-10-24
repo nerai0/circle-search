@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078D6?style=flat-square&logo=windows)](https://github.com/nerai0/circle-search)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 
-[**English**](README.md) | [**Русский**](README.ru.md) | [**Қазақша**](README.kk.md)
+[**English**](README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md)
 
 </div>
 
@@ -26,7 +26,7 @@
 - 🖥️ **Multi-Monitor & Mixed DPI Ready:** True per-monitor awareness (`PerMonitorV2`). Works flawlessly across multi-monitor setups with different scaling factors (`100%`, `125%`, `150%`, `200%`, `2K`, `4K`).
 - 🖱️ **Smart Target Monitor:** Automatically opens on the monitor under your mouse cursor (default) or on the monitor hosting your active foreground window.
 - 🚀 **One-Click Active Window / Full Screen:** Dedicated bottom buttons to quickly scan the active window or capture the entire screen.
-- 🌍 **12 Built-in Languages:** English, Kazakh, Russian, Spanish, German, French, Portuguese, Turkish, Ukrainian, Chinese, Japanese, and Korean.
+- 🌍 **System Language Auto-Detection & 12 Built-in Languages:** Automatically matches your Windows display language out of the box, with full manual override in Settings (English, Kazakh, Russian, Spanish, German, French, Portuguese, Turkish, Ukrainian, Chinese, Japanese, and Korean).
 - 🎨 **Minimalist Design & Themes:** Clean Google-inspired dark and light surfaces, Royal Blue accents, zero distracting animations, and optional Windows startup integration.
 
 ---
@@ -34,12 +34,12 @@
 ## 📥 Downloads & Installation
 
 ### Option 1: Windows Installer (`.msi`) — *Recommended*
-Download the latest **`CircleSearch-v1.0.0-win-x64.msi`** from [**Releases**](https://github.com/nerai0/circle-search/releases).
+Download the latest **`CircleSearch-v1.0.1-win-x64.msi`** from [**Releases**](https://github.com/nerai0/circle-search/releases).
 - Runs per-user (no administrator privileges required).
-- Automatically adds Start Menu and Desktop shortcuts.
+- Automatically adds Start Menu and Desktop shortcuts with high-res icon.
 
 ### Option 2: Portable Archive (`.zip`)
-Download **`CircleSearch-v1.0.0-win-x64-portable.zip`**, extract to any directory, and run `CircleSearch.exe`.
+Download **`CircleSearch-v1.0.1-win-x64-portable.zip`**, extract to any directory, and run `CircleSearch.exe`.
 
 ---
 
@@ -72,7 +72,7 @@ cd circle-search
 dotnet run --project src/CircleSearch.App/CircleSearch.App.csproj
 
 # Build .msi installer and portable .zip
-powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1
+powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1 -Version 1.0.1
 ```
 
 ---
