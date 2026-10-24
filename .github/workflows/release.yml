@@ -1,0 +1,43 @@
+name: Build & Release Windows (.msi + Portable)
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build & Run Tests + Generate MSI & Portable ZIP
+        shell: pwsh
+        run: ./installer/build-release.ps1
+
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CircleSearch-Windows-Installer
+          path: |
+            dist/*.msi
+            dist/*.zip
+
+      - name: Publish GitHub Release (on Tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.msi
+            dist/*.zip
+          generate_release_notes: true
