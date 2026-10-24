@@ -15,7 +15,7 @@ public static class GoogleLensService
         AllowAutoRedirect = false
     })
     {
-        Timeout = TimeSpan.FromSeconds(10)
+        Timeout = TimeSpan.FromSeconds(15)
     };
 
     public static byte[] ConvertToOptimizedJpeg(byte[] pngBytes, long quality = 90L)
@@ -156,13 +156,13 @@ public static class GoogleLensService
 
     public static async Task OpenInExternalBrowserAsync(byte[] imageBytes)
     {
-        // 1. Попытка получить прямой поисковый URL через Chrome Context Menu эндпоинт Google Lens (ep=ccm)
         try
         {
             var targetUrl = await UploadViaChromeLensEndpointAsync(imageBytes).ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(targetUrl))
             {
-                OpenUrl(targetUrl);
+                Infrastructure.AppLogger.Info("Opening Google Lens URL in external browser", new { Url = targetUrl });
+                OpenBrowserUrl(targetUrl);
                 return;
             }
         }
@@ -171,10 +171,9 @@ public static class GoogleLensService
             Infrastructure.AppLogger.Warning($"Direct Lens ccm upload failed: {ex.Message}");
         }
 
-        // 2. Если прямой HTTP-запрос не дал redirect URL, открываем через оптимизированный HTML form-POST
         var jpegBytes = ConvertToOptimizedJpeg(imageBytes, 88L);
         var fallbackHtml = WriteTempAutoSubmitHtmlFile(jpegBytes, isJpeg: true);
-        OpenUrl(fallbackHtml);
+        OpenBrowserUrl(fallbackHtml);
     }
 
     public static async Task<string?> UploadViaChromeLensEndpointAsync(byte[] imageBytes)
@@ -185,7 +184,6 @@ public static class GoogleLensService
             hl = LocalizationService.CurrentLanguage;
         }
 
-        // Эндпоинт контекстного поиска Chrome — дает постоянный URL для внешнего браузера!
         var uploadUri = $"https://lens.google.com/upload?ep=ccm&s=&hl={hl}";
 
         using var request = new HttpRequestMessage(HttpMethod.Post, uploadUri);
@@ -210,8 +208,30 @@ public static class GoogleLensService
         return null;
     }
 
-    public static void OpenUrl(string urlOrPath)
+    public static void OpenBrowserUrl(string urlOrPath)
     {
+        // 1. Попытка открыть в Google Chrome напрямую (если установлен), так как Google Lens родной для Chrome
+        try
+        {
+            var chromeKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe");
+            var chromePath = chromeKey?.GetValue("") as string;
+            if (!string.IsNullOrWhiteSpace(chromePath) && File.Exists(chromePath))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = chromePath,
+                    Arguments = $"\"{urlOrPath}\"",
+                    UseShellExecute = false
+                });
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.AppLogger.Warning($"Failed to start Chrome directly: {ex.Message}");
+        }
+
+        // 2. Системный браузер по умолчанию через ShellExecute
         try
         {
             Process.Start(new ProcessStartInfo
@@ -222,7 +242,7 @@ public static class GoogleLensService
         }
         catch (Exception ex)
         {
-            Infrastructure.AppLogger.Error("Failed to open browser URL", ex);
+            Infrastructure.AppLogger.Error("Failed to open default browser", ex);
         }
     }
 }
