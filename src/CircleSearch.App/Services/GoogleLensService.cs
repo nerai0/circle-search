@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,12 +15,43 @@ public static class GoogleLensService
         AllowAutoRedirect = false
     })
     {
-        Timeout = TimeSpan.FromSeconds(15)
+        Timeout = TimeSpan.FromSeconds(10)
     };
 
-    public static string BuildAutoSubmitHtml(byte[] pngBytes)
+    public static byte[] ConvertToOptimizedJpeg(byte[] pngBytes, long quality = 90L)
     {
-        var base64 = Convert.ToBase64String(pngBytes);
+        try
+        {
+            using var msIn = new MemoryStream(pngBytes);
+            using var bmp = new Bitmap(msIn);
+            using var msOut = new MemoryStream();
+
+            var jpegEncoder = ImageCodecInfo.GetImageEncoders()
+                .FirstOrDefault(c => c.FormatID == ImageFormat.Jpeg.Guid);
+
+            if (jpegEncoder != null)
+            {
+                using var encoderParams = new EncoderParameters(1);
+                encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                bmp.Save(msOut, jpegEncoder, encoderParams);
+                return msOut.ToArray();
+            }
+            
+            bmp.Save(msOut, ImageFormat.Jpeg);
+            return msOut.ToArray();
+        }
+        catch
+        {
+            return pngBytes;
+        }
+    }
+
+    public static string BuildAutoSubmitHtml(byte[] imageBytes, bool isJpeg = false)
+    {
+        var base64 = Convert.ToBase64String(imageBytes);
+        var mimeType = isJpeg ? "image/jpeg" : "image/png";
+        var fileName = isJpeg ? "selection.jpg" : "selection.png";
+
         var hl = Domain.ConfigManager.Current.UiLanguage;
         if (string.IsNullOrWhiteSpace(hl) || hl.Equals("auto", StringComparison.OrdinalIgnoreCase))
         {
@@ -26,7 +59,6 @@ public static class GoogleLensService
         }
 
         var loadingText = LocalizationService.T("overlay.lens_loading");
-        var ts = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         return $$"""
 <!DOCTYPE html>
@@ -43,7 +75,7 @@ public static class GoogleLensService
       justify-content: center;
       background: #16181D;
       color: #F1F3F4;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       font-size: 14px;
     }
     .box {
@@ -70,35 +102,28 @@ public static class GoogleLensService
     <div class="spinner"></div>
     <span>{{loadingText}}</span>
   </div>
+  <form id="lensForm" method="POST" action="https://lens.google.com/upload?ep=ccm&s=&hl={{hl}}" enctype="multipart/form-data">
+    <input type="file" id="lensFile" name="encoded_image" style="display:none;" />
+  </form>
   <script>
-    (async function() {
+    (function() {
       try {
         const b64 = "{{base64}}";
         const bin = atob(b64);
-        const bytes = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) {
+        const len = bin.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
           bytes[i] = bin.charCodeAt(i);
         }
-        const blob = new Blob([bytes], { type: "image/png" });
-        const file = new File([blob], "selection.png", { type: "image/png" });
-
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.enctype = "multipart/form-data";
-        form.action = "https://lens.google.com/v3/upload?hl={{hl}}&re=df&st={{ts}}";
-        form.style.display = "none";
-
-        const input = document.createElement("input");
-        input.type = "file";
-        input.name = "encoded_image";
+        const blob = new Blob([bytes], { type: "{{mimeType}}" });
+        const file = new File([blob], "{{fileName}}", { type: "{{mimeType}}" });
 
         const dt = new DataTransfer();
         dt.items.add(file);
+        const input = document.getElementById("lensFile");
         input.files = dt.files;
 
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
+        document.getElementById("lensForm").submit();
       } catch (e) {
         window.location.replace("https://www.google.com/?olud");
       }
@@ -109,7 +134,7 @@ public static class GoogleLensService
 """;
     }
 
-    public static string WriteTempAutoSubmitHtmlFile(byte[] pngBytes)
+    public static string WriteTempAutoSubmitHtmlFile(byte[] imageBytes, bool isJpeg = false)
     {
         var tempDir = Path.Combine(Path.GetTempPath(), "CircleSearch");
         Directory.CreateDirectory(tempDir);
@@ -125,17 +150,16 @@ public static class GoogleLensService
         catch { }
 
         var htmlPath = Path.Combine(tempDir, $"lens_upload_{Guid.NewGuid():N}.html");
-        File.WriteAllText(htmlPath, BuildAutoSubmitHtml(pngBytes), Encoding.UTF8);
+        File.WriteAllText(htmlPath, BuildAutoSubmitHtml(imageBytes, isJpeg), Encoding.UTF8);
         return htmlPath;
     }
 
-    public static async Task OpenInExternalBrowserAsync(byte[] pngBytes)
+    public static async Task OpenInExternalBrowserAsync(byte[] imageBytes)
     {
+        // 1. Попытка получить прямой поисковый URL через Chrome Context Menu эндпоинт Google Lens (ep=ccm)
         try
         {
-            // Отправляем POST multipart/form-data напрямую в Google Lens и получаем свежий 303 Redirect URL.
-            // Это гарантирует, что сессия поиска создается в момент открытия внешнего браузера и не протухает!
-            var targetUrl = await UploadImageAndGetSearchUrlAsync(pngBytes).ConfigureAwait(false);
+            var targetUrl = await UploadViaChromeLensEndpointAsync(imageBytes).ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(targetUrl))
             {
                 OpenUrl(targetUrl);
@@ -144,15 +168,16 @@ public static class GoogleLensService
         }
         catch (Exception ex)
         {
-            Infrastructure.AppLogger.Warning($"Direct upload failed, falling back to html launcher: {ex.Message}");
+            Infrastructure.AppLogger.Warning($"Direct Lens ccm upload failed: {ex.Message}");
         }
 
-        // Запасной вариант через локальный auto-submit html в браузере пользователя
-        var fallbackHtml = WriteTempAutoSubmitHtmlFile(pngBytes);
+        // 2. Если прямой HTTP-запрос не дал redirect URL, открываем через оптимизированный HTML form-POST
+        var jpegBytes = ConvertToOptimizedJpeg(imageBytes, 88L);
+        var fallbackHtml = WriteTempAutoSubmitHtmlFile(jpegBytes, isJpeg: true);
         OpenUrl(fallbackHtml);
     }
 
-    public static async Task<string?> UploadImageAndGetSearchUrlAsync(byte[] pngBytes)
+    public static async Task<string?> UploadViaChromeLensEndpointAsync(byte[] imageBytes)
     {
         var hl = Domain.ConfigManager.Current.UiLanguage;
         if (string.IsNullOrWhiteSpace(hl) || hl.Equals("auto", StringComparison.OrdinalIgnoreCase))
@@ -160,22 +185,23 @@ public static class GoogleLensService
             hl = LocalizationService.CurrentLanguage;
         }
 
-        var ts = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        var uploadUri = $"https://lens.google.com/v3/upload?hl={hl}&re=df&st={ts}";
+        // Эндпоинт контекстного поиска Chrome — дает постоянный URL для внешнего браузера!
+        var uploadUri = $"https://lens.google.com/upload?ep=ccm&s=&hl={hl}";
 
         using var request = new HttpRequestMessage(HttpMethod.Post, uploadUri);
         request.Headers.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
 
-        using var content = new MultipartFormDataContent();
-        var imageContent = new ByteArrayContent(pngBytes);
-        imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
-        content.Add(imageContent, "encoded_image", "selection.png");
+        var jpegBytes = ConvertToOptimizedJpeg(imageBytes, 88L);
+
+        using var content = new MultipartFormDataContent("----WebKitFormBoundaryCircleSearch");
+        var imageContent = new ByteArrayContent(jpegBytes);
+        imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+        content.Add(imageContent, "encoded_image", "image.jpg");
 
         request.Content = content;
 
         using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
-        // Google Lens возвращает HTTP 303 See Other со свежим search URL в заголовке Location
         if (response.Headers.Location != null)
         {
             return response.Headers.Location.ToString();

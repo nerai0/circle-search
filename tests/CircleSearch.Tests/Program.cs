@@ -105,7 +105,7 @@ public static class Program
     {
         var dummyBytes = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 };
         var html = GoogleLensService.BuildAutoSubmitHtml(dummyBytes);
-        if (!html.Contains("https://lens.google.com/v3/upload", StringComparison.Ordinal))
+        if (!html.Contains("https://lens.google.com/upload", StringComparison.Ordinal))
             throw new Exception("Generated HTML does not contain Google Lens upload endpoint");
     }
 }
