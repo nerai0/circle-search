@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace OkGoogle.Infrastructure;
+namespace CircleSearch.Infrastructure;
 
 public enum LogLevel
 {
@@ -19,7 +19,7 @@ public static class AppLogger
     static AppLogger()
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var dir = Path.Combine(appData, "OkGoogle", "logs");
+        var dir = Path.Combine(appData, "CircleSearch", "logs");
         Directory.CreateDirectory(dir);
         LogFilePath = Path.Combine(dir, $"app-{DateTime.Now:yyyy-MM-dd}.log");
     }

@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle 画面検索",
+  "app.title": "CircleSearch 画面検索",
   "app.subtitle": "Windows 向け かこって検索 (Circle to Search)",
   "tray.open_overlay": "オーバーレイを開く (Win長押し / Alt+Space)",
   "tray.settings": "設定",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "ブラウザで開く",
   "overlay.lens_close_panel": "パネルを閉じる",
   "overlay.lens_loading": "Google レンズで画像を検索中...",
-  "settings.title": "OkGoogle 設定",
+  "settings.title": "CircleSearch 設定",
   "settings.monitor_mode_label": "起動時の対象モニター",
   "settings.monitor_cursor": "マウスカーソルがあるモニター (デフォルト)",
   "settings.monitor_active_window": "アクティブウィンドウがあるモニター",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Winキーの長押しで起動する",
   "settings.autostart": "Windows の起動時に自動的に開始する",
   "settings.save": "保存",
-  "settings.cancel": "キャンセル"
+  "settings.cancel": "キャンセル",
+  "tray.ready_title": "CircleSearch 準備完了",
+  "tray.ready_tip": "Winキーを長押しするかAlt+Spaceで画面検索を開始します。"
 }

@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace OkGoogle.UI;
+namespace CircleSearch.UI;
 
 public static class ThemeManager
 {

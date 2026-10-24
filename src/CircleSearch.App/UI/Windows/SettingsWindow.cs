@@ -1,55 +1,91 @@
 using System.Windows;
-using System.Windows.Controls;
-using OkGoogle.Domain;
-using OkGoogle.Infrastructure;
-using OkGoogle.Services;
-using OkGoogle.UI.Components;
+using CircleSearch.Domain;
+using CircleSearch.Infrastructure;
+using CircleSearch.Services;
+using CircleSearch.UI.Components;
+using WpfApp = System.Windows.Application;
+using WpfBrush = System.Windows.Media.Brush;
+using WpfControls = System.Windows.Controls;
 
-namespace OkGoogle.UI.Windows;
+namespace CircleSearch.UI.Windows;
 
 public sealed class SettingsWindow : Window
 {
-    private readonly System.Windows.Controls.ComboBox _monitorModeCombo;
-    private readonly System.Windows.Controls.ComboBox _uiLangCombo;
-    private readonly System.Windows.Controls.ComboBox _themeCombo;
-    private readonly System.Windows.Controls.TextBox _longPressBox;
-    private readonly System.Windows.Controls.CheckBox _enableWinHoldCheck;
-    private readonly System.Windows.Controls.CheckBox _autoStartCheck;
+    private readonly WpfControls.ComboBox _monitorModeCombo;
+    private readonly WpfControls.ComboBox _uiLangCombo;
+    private readonly WpfControls.ComboBox _themeCombo;
+    private readonly WpfControls.TextBox _longPressBox;
+    private readonly WpfControls.CheckBox _enableWinHoldCheck;
+    private readonly WpfControls.CheckBox _autoStartCheck;
 
     public SettingsWindow()
     {
-        var app = System.Windows.Application.Current;
+        var app = WpfApp.Current;
         Title = LocalizationService.T("settings.title");
-        Width = 460;
-        Height = 430;
+        Width = 490;
+        Height = 540;
+        MinWidth = 420;
+        MinHeight = 440;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        ResizeMode = ResizeMode.NoResize;
+        ResizeMode = ResizeMode.CanResizeWithGrip;
         WindowStyle = WindowStyle.SingleBorderWindow;
         Topmost = true;
-        Background = (System.Windows.Media.Brush)app.Resources["BgPrimaryBrush"];
+        Background = (WpfBrush)app.Resources["BgPrimaryBrush"];
 
-        var root = new Grid
+        var rootGrid = new WpfControls.Grid
         {
-            Margin = new Thickness(20)
+            Margin = new Thickness(0)
         };
-        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        rootGrid.RowDefinitions.Add(new WpfControls.RowDefinition { Height = GridLength.Auto });
+        rootGrid.RowDefinitions.Add(new WpfControls.RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        rootGrid.RowDefinitions.Add(new WpfControls.RowDefinition { Height = GridLength.Auto });
 
-        var header = new TextBlock
+        // Header
+        var headerBorder = new WpfControls.Border
+        {
+            Padding = new Thickness(24, 20, 24, 16),
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            BorderBrush = (WpfBrush)app.Resources["BorderSubtleBrush"]
+        };
+
+        var headerStack = new WpfControls.StackPanel();
+        var headerTitle = new WpfControls.TextBlock
         {
             Text = LocalizationService.T("settings.title"),
             FontSize = 18,
             FontWeight = FontWeights.SemiBold,
-            Foreground = (System.Windows.Media.Brush)app.Resources["TextPrimaryBrush"],
-            Margin = new Thickness(0, 0, 0, 14)
+            Foreground = (WpfBrush)app.Resources["TextPrimaryBrush"]
         };
-        Grid.SetRow(header, 0);
-        root.Children.Add(header);
+        var headerSubtitle = new WpfControls.TextBlock
+        {
+            Text = LocalizationService.T("app.subtitle"),
+            FontSize = 12,
+            Foreground = (WpfBrush)app.Resources["TextSecondaryBrush"],
+            Margin = new Thickness(0, 2, 0, 0)
+        };
+        headerStack.Children.Add(headerTitle);
+        headerStack.Children.Add(headerSubtitle);
+        headerBorder.Child = headerStack;
 
-        var formStack = new StackPanel();
+        WpfControls.Grid.SetRow(headerBorder, 0);
+        rootGrid.Children.Add(headerBorder);
 
-        // Target Monitor Mode (Cursor by default vs ActiveWindow)
+        // Content wrapped in ScrollViewer
+        var scrollViewer = new WpfControls.ScrollViewer
+        {
+            VerticalScrollBarVisibility = WpfControls.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = WpfControls.ScrollBarVisibility.Disabled,
+            Padding = new Thickness(24, 16, 24, 16)
+        };
+
+        var formStack = new WpfControls.StackPanel();
+
+        // 1. Language selector
+        formStack.Children.Add(CreateLabel(LocalizationService.T("settings.ui_lang_label")));
+        _uiLangCombo = CreateCombo(LocalizationService.SupportedLanguages, ConfigManager.Current.UiLanguage);
+        formStack.Children.Add(_uiLangCombo);
+
+        // 2. Target Monitor Mode
         formStack.Children.Add(CreateLabel(LocalizationService.T("settings.monitor_mode_label")));
         _monitorModeCombo = CreateCombo(new[]
         {
@@ -58,12 +94,7 @@ public sealed class SettingsWindow : Window
         }, ConfigManager.Current.TargetMonitorMode);
         formStack.Children.Add(_monitorModeCombo);
 
-        // UI language (all 12 supported languages)
-        formStack.Children.Add(CreateLabel(LocalizationService.T("settings.ui_lang_label")));
-        _uiLangCombo = CreateCombo(LocalizationService.SupportedLanguages, ConfigManager.Current.UiLanguage);
-        formStack.Children.Add(_uiLangCombo);
-
-        // Theme
+        // 3. Theme selector
         formStack.Children.Add(CreateLabel(LocalizationService.T("settings.theme_label")));
         _themeCombo = CreateCombo(new[]
         {
@@ -72,58 +103,68 @@ public sealed class SettingsWindow : Window
         }, ConfigManager.Current.Theme);
         formStack.Children.Add(_themeCombo);
 
-        // Win hold duration
-        var holdRow = new Grid { Margin = new Thickness(0, 4, 0, 10) };
-        holdRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        holdRow.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });
+        // 4. Hotkey / Long press
+        formStack.Children.Add(CreateLabel(LocalizationService.T("settings.long_press_label")));
+        var holdRow = new WpfControls.Grid { Margin = new Thickness(0, 0, 0, 16) };
+        holdRow.ColumnDefinitions.Add(new WpfControls.ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        holdRow.ColumnDefinitions.Add(new WpfControls.ColumnDefinition { Width = new GridLength(100) });
 
-        _enableWinHoldCheck = new System.Windows.Controls.CheckBox
+        _enableWinHoldCheck = new WpfControls.CheckBox
         {
             Content = LocalizationService.T("settings.enable_win_hold"),
             IsChecked = ConfigManager.Current.EnableWinHold,
-            Foreground = (System.Windows.Media.Brush)app.Resources["TextPrimaryBrush"],
+            Foreground = (WpfBrush)app.Resources["TextPrimaryBrush"],
             VerticalAlignment = VerticalAlignment.Center,
             FontSize = 13
         };
-        Grid.SetColumn(_enableWinHoldCheck, 0);
+        WpfControls.Grid.SetColumn(_enableWinHoldCheck, 0);
         holdRow.Children.Add(_enableWinHoldCheck);
 
-        _longPressBox = new System.Windows.Controls.TextBox
+        _longPressBox = new WpfControls.TextBox
         {
             Text = ConfigManager.Current.LongPressMs.ToString(),
-            Background = (System.Windows.Media.Brush)app.Resources["BgElevatedBrush"],
-            Foreground = (System.Windows.Media.Brush)app.Resources["TextPrimaryBrush"],
-            BorderThickness = new Thickness(0),
+            Background = (WpfBrush)app.Resources["BgElevatedBrush"],
+            Foreground = (WpfBrush)app.Resources["TextPrimaryBrush"],
+            BorderThickness = new Thickness(1),
+            BorderBrush = (WpfBrush)app.Resources["BorderSubtleBrush"],
             Padding = new Thickness(8, 6, 8, 6),
             FontSize = 13,
+            VerticalContentAlignment = VerticalAlignment.Center,
             ToolTip = LocalizationService.T("settings.long_press_label")
         };
-        Grid.SetColumn(_longPressBox, 1);
+        WpfControls.Grid.SetColumn(_longPressBox, 1);
         holdRow.Children.Add(_longPressBox);
         formStack.Children.Add(holdRow);
 
-        // Windows Startup
-        _autoStartCheck = new System.Windows.Controls.CheckBox
+        // 5. Windows Autostart
+        _autoStartCheck = new WpfControls.CheckBox
         {
             Content = LocalizationService.T("settings.autostart"),
             IsChecked = AutoStartService.IsEnabled(),
-            Foreground = (System.Windows.Media.Brush)app.Resources["TextPrimaryBrush"],
+            Foreground = (WpfBrush)app.Resources["TextPrimaryBrush"],
             VerticalAlignment = VerticalAlignment.Center,
             FontSize = 13,
-            Margin = new Thickness(0, 2, 0, 4)
+            Margin = new Thickness(0, 0, 0, 8)
         };
         formStack.Children.Add(_autoStartCheck);
 
-        var card = UiComponentFactory.CreateSurfaceCard(formStack, 14, new Thickness(16));
-        Grid.SetRow(card, 1);
-        root.Children.Add(card);
+        scrollViewer.Content = formStack;
+        WpfControls.Grid.SetRow(scrollViewer, 1);
+        rootGrid.Children.Add(scrollViewer);
 
-        // Footer buttons
-        var footer = new StackPanel
+        // Footer
+        var footerBorder = new WpfControls.Border
         {
-            Orientation = System.Windows.Controls.Orientation.Horizontal,
-            HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
-            Margin = new Thickness(0, 14, 0, 0)
+            Padding = new Thickness(24, 14, 24, 16),
+            BorderThickness = new Thickness(0, 1, 0, 0),
+            BorderBrush = (WpfBrush)app.Resources["BorderSubtleBrush"],
+            Background = (WpfBrush)app.Resources["BgSecondaryBrush"]
+        };
+
+        var footer = new WpfControls.StackPanel
+        {
+            Orientation = WpfControls.Orientation.Horizontal,
+            HorizontalAlignment = System.Windows.HorizontalAlignment.Right
         };
 
         var cancelBtn = UiComponentFactory.CreateActionButton(
@@ -131,6 +172,7 @@ public sealed class SettingsWindow : Window
             null,
             isPrimary: false,
             onClick: (_, _) => Close());
+        cancelBtn.Margin = new Thickness(0, 0, 10, 0);
 
         var saveBtn = UiComponentFactory.CreateActionButton(
             LocalizationService.T("settings.save"),
@@ -140,10 +182,12 @@ public sealed class SettingsWindow : Window
 
         footer.Children.Add(cancelBtn);
         footer.Children.Add(saveBtn);
-        Grid.SetRow(footer, 2);
-        root.Children.Add(footer);
+        footerBorder.Child = footer;
 
-        Content = root;
+        WpfControls.Grid.SetRow(footerBorder, 2);
+        rootGrid.Children.Add(footerBorder);
+
+        Content = rootGrid;
     }
 
     private void OnSaveClick(object sender, RoutedEventArgs e)
@@ -164,7 +208,7 @@ public sealed class SettingsWindow : Window
         }
 
         ConfigManager.Current.EnableWinHold = _enableWinHoldCheck.IsChecked == true;
-        if (int.TryParse(_longPressBox.Text, out var ms) && ms >= 250 && ms <= 1500)
+        if (int.TryParse(_longPressBox.Text, out var ms) && ms >= 200 && ms <= 2000)
             ConfigManager.Current.LongPressMs = ms;
 
         AutoStartService.SetEnabled(_autoStartCheck.IsChecked == true);
@@ -173,27 +217,28 @@ public sealed class SettingsWindow : Window
         Close();
     }
 
-    private static TextBlock CreateLabel(string text)
+    private static WpfControls.TextBlock CreateLabel(string text)
     {
-        var app = System.Windows.Application.Current;
-        return new TextBlock
+        var app = WpfApp.Current;
+        return new WpfControls.TextBlock
         {
             Text = text,
-            Foreground = (System.Windows.Media.Brush)app.Resources["TextSecondaryBrush"],
+            Foreground = (WpfBrush)app.Resources["TextSecondaryBrush"],
             FontSize = 12,
-            Margin = new Thickness(0, 0, 0, 4)
+            FontWeight = FontWeights.Medium,
+            Margin = new Thickness(0, 0, 0, 6)
         };
     }
 
-    private static System.Windows.Controls.ComboBox CreateCombo((string Key, string Label)[] items, string selectedKey)
+    private static WpfControls.ComboBox CreateCombo((string Key, string Label)[] items, string selectedKey)
     {
-        var combo = new System.Windows.Controls.ComboBox
+        var combo = new WpfControls.ComboBox
         {
             DisplayMemberPath = "Value",
             SelectedValuePath = "Key",
-            Padding = new Thickness(8, 6, 8, 6),
+            Padding = new Thickness(10, 8, 10, 8),
             FontSize = 13,
-            Margin = new Thickness(0, 0, 0, 12)
+            Margin = new Thickness(0, 0, 0, 16)
         };
 
         foreach (var item in items)

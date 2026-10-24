@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle Pesquisa na Tela",
+  "app.title": "CircleSearch Pesquisa na Tela",
   "app.subtitle": "Circle to Search para Windows",
   "tray.open_overlay": "Abrir sobreposição (Segurar Win / Alt+Espaço)",
   "tray.settings": "Configurações",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "Abrir no navegador",
   "overlay.lens_close_panel": "Fechar painel",
   "overlay.lens_loading": "Pesquisando imagem no Google...",
-  "settings.title": "Configurações do OkGoogle",
+  "settings.title": "Configurações do CircleSearch",
   "settings.monitor_mode_label": "Monitor ao ativar",
   "settings.monitor_cursor": "Monitor onde está o cursor (Padrão)",
   "settings.monitor_active_window": "Monitor com a janela ativa",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Ativar segurando a tecla Win",
   "settings.autostart": "Iniciar automaticamente com o Windows",
   "settings.save": "Salvar",
-  "settings.cancel": "Cancelar"
+  "settings.cancel": "Cancelar",
+  "tray.ready_title": "CircleSearch está ativo",
+  "tray.ready_tip": "Segure a tecla Win ou pressione Alt+Space para pesquisar."
 }

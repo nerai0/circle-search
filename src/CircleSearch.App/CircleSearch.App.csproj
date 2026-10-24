@@ -11,7 +11,8 @@
     <AssemblyName>CircleSearch</AssemblyName>
     <RootNamespace>CircleSearch</RootNamespace>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-    <Version>1.0.0</Version>
+    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+    <Version>1.0.1</Version>
     <Product>CircleSearch for Windows</Product>
     <Company>CircleSearch Contributors</Company>
     <Description>Circle to Search overlay for Windows with instant Google Lens integration</Description>
@@ -19,6 +20,12 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Locales\**\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

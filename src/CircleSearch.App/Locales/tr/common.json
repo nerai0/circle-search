@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle Ekran Araması",
+  "app.title": "CircleSearch Ekran Araması",
   "app.subtitle": "Windows için Circle to Search",
   "tray.open_overlay": "Arayüzü Aç (Win Basılı Tut / Alt+Boşluk)",
   "tray.settings": "Ayarlar",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "Tarayıcıda Aç",
   "overlay.lens_close_panel": "Paneli Kapat",
   "overlay.lens_loading": "Görsel Google Lens ile aranıyor...",
-  "settings.title": "OkGoogle Ayarları",
+  "settings.title": "CircleSearch Ayarları",
   "settings.monitor_mode_label": "Açılışta Hedef Monitör",
   "settings.monitor_cursor": "Fare imlecinin bulunduğu monitör (Varsayılan)",
   "settings.monitor_active_window": "Etkin pencerenin bulunduğu monitör",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Win tuşuna basılı tutarak çalıştır",
   "settings.autostart": "Windows ile birlikte otomatik başlat",
   "settings.save": "Kaydet",
-  "settings.cancel": "İptal"
+  "settings.cancel": "İptal",
+  "tray.ready_title": "CircleSearch Hazır",
+  "tray.ready_tip": "Ekranda arama yapmak için Win tuşunu basılı tutun veya Alt+Space tuşlayın."
 }

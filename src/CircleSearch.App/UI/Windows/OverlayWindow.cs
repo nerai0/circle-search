@@ -8,12 +8,12 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
-using OkGoogle.Domain;
-using OkGoogle.Infrastructure;
-using OkGoogle.Services;
-using OkGoogle.UI.Components;
+using CircleSearch.Domain;
+using CircleSearch.Infrastructure;
+using CircleSearch.Services;
+using CircleSearch.UI.Components;
 
-namespace OkGoogle.UI.Windows;
+namespace CircleSearch.UI.Windows;
 
 public sealed class OverlayWindow : Window
 {
@@ -649,7 +649,7 @@ public sealed class OverlayWindow : Window
     {
         var userDataFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "OkGoogle",
+            "CircleSearch",
             "WebView2");
         var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
         await _lensWebView.EnsureCoreWebView2Async(env);

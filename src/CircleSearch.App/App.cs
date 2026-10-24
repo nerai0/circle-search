@@ -1,13 +1,14 @@
+using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows;
-using OkGoogle.Domain;
-using OkGoogle.Infrastructure;
-using OkGoogle.Services;
-using OkGoogle.UI;
-using OkGoogle.UI.Windows;
+using CircleSearch.Domain;
+using CircleSearch.Infrastructure;
+using CircleSearch.Services;
+using CircleSearch.UI;
+using CircleSearch.UI.Windows;
 
-namespace OkGoogle;
+namespace CircleSearch;
 
 public sealed class App : System.Windows.Application
 {
@@ -52,7 +53,7 @@ public sealed class App : System.Windows.Application
         base.OnStartup(e);
         AppLogger.Info("OnStartup entered", new { Desktop = ScreenCaptureService.GetCurrentDesktopInfo() });
 
-        _singleInstanceMutex = new Mutex(true, "Local\\OkGoogleDesktopAssistant_SingleInstance", out bool createdNew);
+        _singleInstanceMutex = new Mutex(true, "Local\\CircleSearch_SingleInstance", out bool createdNew);
         if (!createdNew)
         {
             AppLogger.Warning("Another instance is already running, shutting down.");
@@ -74,7 +75,7 @@ public sealed class App : System.Windows.Application
 
             LocalizationService.LanguageChanged += RebuildTrayMenu;
 
-            AppLogger.Info("OkGoogle application started ready in tray");
+            AppLogger.Info("CircleSearch application started ready in tray");
         }
         catch (Exception ex)
         {
@@ -93,6 +94,17 @@ public sealed class App : System.Windows.Application
 
         _trayIcon.DoubleClick += (_, _) => ToggleOverlay();
         RebuildTrayMenu();
+
+        try
+        {
+            var title = LocalizationService.T("tray.ready_title");
+            var tip = LocalizationService.T("tray.ready_tip");
+            _trayIcon.ShowBalloonTip(3000, title, tip, System.Windows.Forms.ToolTipIcon.Info);
+        }
+        catch
+        {
+            // Ignore if notification center is unavailable
+        }
     }
 
     private void RebuildTrayMenu()
@@ -155,6 +167,19 @@ public sealed class App : System.Windows.Application
 
     private static Icon CreateRoyalBlueAppIcon()
     {
+        try
+        {
+            var icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "app.ico");
+            if (File.Exists(icoPath))
+            {
+                return new Icon(icoPath);
+            }
+        }
+        catch
+        {
+            // fallback to dynamic draw
+        }
+
         using var bmp = new Bitmap(32, 32);
         using (var g = Graphics.FromImage(bmp))
         {

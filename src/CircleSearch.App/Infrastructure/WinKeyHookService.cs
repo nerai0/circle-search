@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace OkGoogle.Infrastructure;
+namespace CircleSearch.Infrastructure;
 
 public sealed class WinKeyHookService : IDisposable
 {

@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle Экраннан Іздеу",
+  "app.title": "CircleSearch Экраннан Іздеу",
   "app.subtitle": "Windows-қа арналған Circle to Search",
   "tray.open_overlay": "Оверлейді ашу (Win ұстап тұру / Alt+Space)",
   "tray.settings": "Баптаулар",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "Браузерде ашу",
   "overlay.lens_close_panel": "Панельді жабу",
   "overlay.lens_loading": "Google-дан сурет бойынша іздеу...",
-  "settings.title": "OkGoogle Баптаулары",
+  "settings.title": "CircleSearch Баптаулары",
   "settings.monitor_mode_label": "Шақыру кезіндегі мониторды таңдау",
   "settings.monitor_cursor": "Меңзер тұрған монитор (Әдепкі бойынша)",
   "settings.monitor_active_window": "Белсенді терезесі бар монитор",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Win пернесін басып тұру арқылы шақыру",
   "settings.autostart": "Windows-пен бірге автоматты түрде іске қосу",
   "settings.save": "Сақтау",
-  "settings.cancel": "Болдырмау"
+  "settings.cancel": "Болдырмау",
+  "tray.ready_title": "CircleSearch іске қосылды",
+  "tray.ready_tip": "Экраннан іздеу үшін Win пернесін ұстап тұрыңыз немесе Alt+Space басыңыз."
 }

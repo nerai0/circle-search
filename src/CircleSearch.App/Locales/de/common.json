@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle Bildschirmsuche",
+  "app.title": "CircleSearch Bildschirmsuche",
   "app.subtitle": "Circle to Search für Windows",
   "tray.open_overlay": "Overlay öffnen (Win gedrückt halten / Alt+Leertaste)",
   "tray.settings": "Einstellungen",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "Im Browser öffnen",
   "overlay.lens_close_panel": "Panel schließen",
   "overlay.lens_loading": "Bildersuche mit Google Lens...",
-  "settings.title": "OkGoogle Einstellungen",
+  "settings.title": "CircleSearch Einstellungen",
   "settings.monitor_mode_label": "Zielmonitor beim Aufruf",
   "settings.monitor_cursor": "Monitor unter dem Mauszeiger (Standard)",
   "settings.monitor_active_window": "Monitor mit aktivem Fenster",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Durch Gedrückthalten der Win-Taste aufrufen",
   "settings.autostart": "Automatisch mit Windows starten",
   "settings.save": "Speichern",
-  "settings.cancel": "Abbrechen"
+  "settings.cancel": "Abbrechen",
+  "tray.ready_title": "CircleSearch ist bereit",
+  "tray.ready_tip": "Halten Sie die Win-Taste gedrückt oder drücken Sie Alt+Space zur Suche."
 }

@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace OkGoogle.Services;
+namespace CircleSearch.Services;
 
 public static class GoogleLensService
 {
@@ -96,7 +96,7 @@ public static class GoogleLensService
 
     public static string WriteTempAutoSubmitHtmlFile(byte[] pngBytes)
     {
-        var tempDir = Path.Combine(Path.GetTempPath(), "OkGoogle");
+        var tempDir = Path.Combine(Path.GetTempPath(), "CircleSearch");
         Directory.CreateDirectory(tempDir);
 
         try

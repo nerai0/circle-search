@@ -1,7 +1,7 @@
-using OkGoogle.Domain;
-using OkGoogle.Services;
+using CircleSearch.Domain;
+using CircleSearch.Services;
 
-namespace OkGoogle.Tests;
+namespace CircleSearch.Tests;
 
 public static class Program
 {

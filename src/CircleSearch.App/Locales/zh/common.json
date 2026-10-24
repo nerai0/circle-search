@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle 屏幕搜索",
+  "app.title": "CircleSearch 屏幕搜索",
   "app.subtitle": "Windows 版即圈即搜 (Circle to Search)",
   "tray.open_overlay": "打开屏幕搜索 (长按 Win / Alt+Space)",
   "tray.settings": "设置",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "在浏览器中打开",
   "overlay.lens_close_panel": "关闭面板",
   "overlay.lens_loading": "正在通过 Google 搜索图片...",
-  "settings.title": "OkGoogle 设置",
+  "settings.title": "CircleSearch 设置",
   "settings.monitor_mode_label": "唤醒时选择显示器",
   "settings.monitor_cursor": "鼠标指针所在的显示器 (默认)",
   "settings.monitor_active_window": "当前活动窗口所在的显示器",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "通过长按 Win 键唤醒",
   "settings.autostart": "随 Windows 开机自动启动",
   "settings.save": "保存",
-  "settings.cancel": "取消"
+  "settings.cancel": "取消",
+  "tray.ready_title": "CircleSearch 已就绪",
+  "tray.ready_tip": "长按 Win 键或按 Alt+Space 开始屏幕搜索。"
 }

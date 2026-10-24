@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Media.Imaging;
 
-namespace OkGoogle.Infrastructure;
+namespace CircleSearch.Infrastructure;
 
 public sealed class CapturedScreenContext
 {

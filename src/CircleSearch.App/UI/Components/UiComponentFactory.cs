@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace OkGoogle.UI.Components;
+namespace CircleSearch.UI.Components;
 
 public static class UiComponentFactory
 {

@@ -2,11 +2,11 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 
-namespace OkGoogle.Domain;
+namespace CircleSearch.Domain;
 
 public sealed class AppSettings
 {
-    public string UiLanguage { get; set; } = "ru";
+    public string UiLanguage { get; set; } = "kk";
     public string Theme { get; set; } = "Dark";
     public int LongPressMs { get; set; } = 400;
     public bool EnableWinHold { get; set; } = true;
@@ -24,7 +24,7 @@ public static class ConfigManager
     static ConfigManager()
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var dir = Path.Combine(appData, "OkGoogle");
+        var dir = Path.Combine(appData, "CircleSearch");
         Directory.CreateDirectory(dir);
         ConfigFilePath = Path.Combine(dir, "settings.json");
         Load();

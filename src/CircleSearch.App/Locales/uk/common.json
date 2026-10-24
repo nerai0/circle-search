@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle Пошук на Екрані",
+  "app.title": "CircleSearch Пошук на Екрані",
   "app.subtitle": "Circle to Search для Windows",
   "tray.open_overlay": "Викликати оверлей (Утримання Win / Alt+Space)",
   "tray.settings": "Налаштування",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "Відкрити в браузері",
   "overlay.lens_close_panel": "Закрити панель",
   "overlay.lens_loading": "Пошук за зображенням у Google...",
-  "settings.title": "Налаштування OkGoogle",
+  "settings.title": "Налаштування CircleSearch",
   "settings.monitor_mode_label": "Вибір монітора під час виклику",
   "settings.monitor_cursor": "Монітор, де знаходиться курсор миші (За замовчуванням)",
   "settings.monitor_active_window": "Монітор з активним вікном",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Викликати затисканням клавіші Win",
   "settings.autostart": "Запускати автоматично разом із Windows",
   "settings.save": "Зберегти",
-  "settings.cancel": "Скасувати"
+  "settings.cancel": "Скасувати",
+  "tray.ready_title": "CircleSearch готовий",
+  "tray.ready_tip": "Затисніть клавішу Win або натисніть Alt+Space для пошуку."
 }

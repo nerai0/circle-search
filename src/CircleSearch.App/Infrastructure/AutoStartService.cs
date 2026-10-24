@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using Microsoft.Win32;
 
-namespace OkGoogle.Infrastructure;
+namespace CircleSearch.Infrastructure;
 
 public static class AutoStartService
 {
     private const string RunRegistryKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string AppValueName = "OkGoogleScreenSearch";
+    private const string AppValueName = "CircleSearch";
 
     public static bool IsEnabled()
     {

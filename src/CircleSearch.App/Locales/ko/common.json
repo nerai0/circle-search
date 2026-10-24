@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle 화면 검색",
+  "app.title": "CircleSearch 화면 검색",
   "app.subtitle": "Windows용 서클 투 서치 (Circle to Search)",
   "tray.open_overlay": "오버레이 열기 (Win 길게 누르기 / Alt+Space)",
   "tray.settings": "설정",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "브라우저에서 열기",
   "overlay.lens_close_panel": "패널 닫기",
   "overlay.lens_loading": "Google 렌즈로 이미지 검색 중...",
-  "settings.title": "OkGoogle 설정",
+  "settings.title": "CircleSearch 설정",
   "settings.monitor_mode_label": "호출 시 대상 모니터",
   "settings.monitor_cursor": "마우스 커서가 있는 모니터 (기본값)",
   "settings.monitor_active_window": "활성 창이 있는 모니터",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Win 키를 길게 눌러 호출",
   "settings.autostart": "Windows 시작 시 자동 실행",
   "settings.save": "저장",
-  "settings.cancel": "취소"
+  "settings.cancel": "취소",
+  "tray.ready_title": "CircleSearch 준비됨",
+  "tray.ready_tip": "화면 검색을 시작하려면 Win 키를 길게 누르거나 Alt+Space를 누르세요."
 }

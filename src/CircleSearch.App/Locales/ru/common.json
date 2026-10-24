@@ -1,5 +1,5 @@
 {
-  "app.title": "OkGoogle Экранный Поиск",
+  "app.title": "CircleSearch Экранный Поиск",
   "app.subtitle": "Circle to Search для Windows",
   "tray.open_overlay": "Вызвать оверлей (Удержание Win / Alt+Space)",
   "tray.settings": "Настройки",
@@ -14,7 +14,7 @@
   "overlay.lens_open_external": "Открыть в браузере",
   "overlay.lens_close_panel": "Закрыть панель",
   "overlay.lens_loading": "Поиск по изображению в Google...",
-  "settings.title": "Настройки OkGoogle",
+  "settings.title": "Настройки CircleSearch",
   "settings.monitor_mode_label": "Выбор монитора при вызове",
   "settings.monitor_cursor": "Монитор, где находится курсор мыши (По умолчанию)",
   "settings.monitor_active_window": "Монитор с активным окном",
@@ -26,5 +26,7 @@
   "settings.enable_win_hold": "Вызывать по зажатию клавиши Win",
   "settings.autostart": "Запускать автоматически вместе с Windows",
   "settings.save": "Сохранить",
-  "settings.cancel": "Отмена"
+  "settings.cancel": "Отмена",
+  "tray.ready_title": "CircleSearch активен",
+  "tray.ready_tip": "Зажмите клавишу Win или нажмите Alt+Space для поиска по экрану."
 }
