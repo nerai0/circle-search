@@ -408,10 +408,9 @@ public sealed class OverlayWindow : Window
             isPrimary: false,
             onClick: async (_, _) =>
             {
-                var currentUri = _lensWebView.Source?.ToString();
                 var bytes = _lastUploadedPngBytes ?? _selectedRegionPngBytes ?? _context.FullScreenPngBytes;
                 Close();
-                await GoogleLensService.OpenInExternalBrowserAsync(bytes, currentUri);
+                await GoogleLensService.OpenInExternalBrowserAsync(bytes);
             });
 
         var closeDrawerBtn = UiComponentFactory.CreateActionButton(
