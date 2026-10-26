@@ -31,6 +31,7 @@ secrets.json
 *.pfx
 
 # Temporary & Logs
+nul
 *.log
 *.dump
 *.sql
