@@ -1,11 +1,20 @@
 param(
-    [string]$Version = "1.0.1"
+    # По умолчанию версия берётся из <Version> в CircleSearch.App.csproj (единый источник правды)
+    [string]$Version
 )
 
 $ErrorActionPreference = "Stop"
 $RootDir = Split-Path -Parent $PSScriptRoot
+$AppProject = Join-Path $RootDir "src\CircleSearch.App\CircleSearch.App.csproj"
 $PublishDir = Join-Path $RootDir "publish\win-x64"
 $DistDir = Join-Path $RootDir "dist"
+
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    $Version = ([xml](Get-Content $AppProject -Raw)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+    if ([string]::IsNullOrWhiteSpace($Version)) { throw "Version not found in $AppProject" }
+}
+# MSI требует версию формата major.minor.build[.revision]
+$MsiVersion = if (($Version -split '\.').Count -lt 4) { "$Version.0" } else { $Version }
 
 Write-Host "=== 1. Running Unit Tests ===" -ForegroundColor Cyan
 dotnet run --project "$RootDir\tests\CircleSearch.Tests\CircleSearch.Tests.csproj" -c Release
@@ -14,11 +23,12 @@ Write-Host "=== 2. Publishing Self-Contained Win-x64 Release (v$Version) ===" -F
 if (Test-Path $PublishDir) { Remove-Item $PublishDir -Recurse -Force }
 if (!(Test-Path $DistDir)) { New-Item -ItemType Directory -Path $DistDir | Out-Null }
 
-dotnet publish "$RootDir\src\CircleSearch.App\CircleSearch.App.csproj" `
+dotnet publish $AppProject `
     -c Release `
     -r win-x64 `
     --self-contained true `
     -p:PublishSingleFile=false `
+    -p:Version=$Version `
     -p:DebugType=None `
     -p:DebugSymbols=false `
     -o $PublishDir
@@ -39,7 +49,7 @@ wix eula accept wix7 | Out-Null
 
 $MsiPath = Join-Path $DistDir "CircleSearch-v$Version-win-x64.msi"
 if (Test-Path $MsiPath) { Remove-Item $MsiPath -Force }
-wix build "$PSScriptRoot\Product.wxs" -d PublishDir="$PublishDir" -arch x64 -o "$MsiPath"
+wix build "$PSScriptRoot\Product.wxs" -d PublishDir="$PublishDir" -d MsiVersion="$MsiVersion" -arch x64 -o "$MsiPath"
 if (-not (Test-Path $MsiPath)) {
     throw "Failed to create MSI installer at $MsiPath"
 }

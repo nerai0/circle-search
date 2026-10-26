@@ -11,5 +11,5 @@ Initial open-source release of **CircleSearch**!
 - **100% Free & Open-Source:** No API keys or subscriptions required.
 
 #### Downloads:
-- **Windows Installer (Recommended):** `CircleSearch-v1.0.0-win-x64.msi`
-- **Portable ZIP:** `CircleSearch-v1.0.0-win-x64-portable.zip`
+- **Windows Installer (Recommended):** `CircleSearch-v<version>-win-x64.msi`
+- **Portable ZIP:** `CircleSearch-v<version>-win-x64-portable.zip`

@@ -1,7 +1,7 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Name="CircleSearch for Windows"
            Manufacturer="CircleSearch Contributors"
-           Version="1.0.1.0"
+           Version="$(var.MsiVersion)"
            UpgradeCode="8A7F9B14-6D2C-4E91-9A55-1C3E8B4D2026"
            Scope="perUser"
            Compressed="yes">
