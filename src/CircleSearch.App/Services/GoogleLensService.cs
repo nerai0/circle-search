@@ -163,7 +163,8 @@ public static class GoogleLensService
         // 1. Сначала пытаемся запустить в установленном Google Chrome (родной браузер для Lens)
         try
         {
-            using var chromeKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe");
+            using var chromeKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")
+                               ?? Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe");
             var chromeExe = chromeKey?.GetValue("") as string;
             if (!string.IsNullOrWhiteSpace(chromeExe) && File.Exists(chromeExe))
             {
