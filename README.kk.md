@@ -35,6 +35,9 @@
 
 ## 📥 Жүктеп алу және орнату
 
+> **Ескертпе:** CircleSearch өте жеңіл (~650 КБ) және жұмысы үшін [.NET 10 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/10.0) қажет етеді. Егер ол жүйеде орнатылмаған болса, Windows бірінші рет қосқанда оны бір басу арқылы орнатуды ұсынады.
+
+
 ### 1-нұсқа: Windows орнатқышы (`.msi`) — *Ұсынылады*
 [**Releases**](https://github.com/nerai0/circle-search/releases) бетінен соңғы **`CircleSearch-v<version>-win-x64.msi`** файлын жүктеп алыңыз.
 - Әкімші құқығын талап етпейді (пайдаланушы профиліне орнатылады).

@@ -35,6 +35,9 @@
 
 ## 📥 Downloads & Installation
 
+> **Note:** CircleSearch is ultra-lightweight (~650 KB) and requires [.NET 10 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/10.0). If not already installed, Windows will offer to install it in one click on first run.
+
+
 ### Option 1: Windows Installer (`.msi`) — *Recommended*
 Download the latest **`CircleSearch-v<version>-win-x64.msi`** from [**Releases**](https://github.com/nerai0/circle-search/releases).
 - Runs per-user (no administrator privileges required).
