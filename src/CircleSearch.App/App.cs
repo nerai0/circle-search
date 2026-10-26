@@ -83,6 +83,7 @@ public sealed class App : System.Windows.Application
             _hookService.Start();
 
             LocalizationService.LanguageChanged += RebuildTrayMenu;
+            ConfigManager.SettingsChanged += RebuildTrayMenu;
 
             AppLogger.Info("CircleSearch application started ready in tray");
         }
@@ -120,14 +121,45 @@ public sealed class App : System.Windows.Application
     {
         if (_trayIcon == null) return;
 
-        var menu = new System.Windows.Forms.ContextMenuStrip();
-        menu.Items.Add(LocalizationService.T("tray.open_overlay"), null, (_, _) => ToggleOverlay());
-        menu.Items.Add(LocalizationService.T("tray.settings"), null, (_, _) => OpenSettingsWindow());
-        menu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
-        menu.Items.Add(LocalizationService.T("tray.exit"), null, (_, _) => Shutdown());
+        var menu = new System.Windows.Forms.ContextMenuStrip
+        {
+            Renderer = new ThemedMenuRenderer(),
+            Font = new System.Drawing.Font("Segoe UI", 9.5f),
+            ShowImageMargin = false,
+            ShowCheckMargin = true,
+            Padding = new System.Windows.Forms.Padding(0, 4, 0, 4)
+        };
 
+        menu.Items.Add(CreateMenuItem(LocalizationService.T("tray.open_overlay"), ToggleOverlay));
+        menu.Items.Add(CreateMenuItem(LocalizationService.T("tray.settings"), OpenSettingsWindow));
+
+        var autoStartItem = CreateMenuItem(LocalizationService.T("settings.autostart"), null);
+        autoStartItem.Click += (_, _) =>
+        {
+            AutoStartService.SetEnabled(!AutoStartService.IsEnabled());
+            autoStartItem.Checked = AutoStartService.IsEnabled();
+        };
+        menu.Opening += (_, _) => autoStartItem.Checked = AutoStartService.IsEnabled();
+        menu.Items.Add(autoStartItem);
+
+        menu.Items.Add(new System.Windows.Forms.ToolStripSeparator());
+        menu.Items.Add(CreateMenuItem(LocalizationService.T("tray.exit"), Shutdown));
+
+        var oldMenu = _trayIcon.ContextMenuStrip;
         _trayIcon.ContextMenuStrip = menu;
+        oldMenu?.Dispose();
         _trayIcon.Text = LocalizationService.T("app.title");
+    }
+
+    private static System.Windows.Forms.ToolStripMenuItem CreateMenuItem(string text, Action? onClick)
+    {
+        var item = new System.Windows.Forms.ToolStripMenuItem(text)
+        {
+            Padding = new System.Windows.Forms.Padding(0, 6, 0, 6)
+        };
+        if (onClick != null)
+            item.Click += (_, _) => onClick();
+        return item;
     }
 
     private void ToggleOverlay()

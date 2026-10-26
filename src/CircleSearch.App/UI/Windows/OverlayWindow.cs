@@ -38,6 +38,9 @@ public sealed class OverlayWindow : Window
     private readonly Grid _selectionContainer;
 
     private Border _lensDrawerCard = null!;
+    private FrameworkElement _topBar = null!;
+    private StackPanel _bottomDock = null!;
+    private System.Windows.Controls.Button? _attachWindowButton;
     private WebView2 _lensWebView = null!;
     private bool _webViewInitialized;
     private Task? _webViewInitTask;
@@ -131,8 +134,8 @@ public sealed class OverlayWindow : Window
         rootGrid.Children.Add(_interactiveCanvas);
 
         // 5. Верхняя подсказка и кнопки настроек/выхода
-        var topBar = BuildTopBar();
-        rootGrid.Children.Add(topBar);
+        _topBar = BuildTopBar();
+        rootGrid.Children.Add(_topBar);
 
         // 6. Встроенный широкий браузер Google Объектив
         var lensDrawer = BuildEmbeddedLensDrawer();
@@ -140,6 +143,7 @@ public sealed class OverlayWindow : Window
 
         // 7. Компактная нижняя панель выбора источника (Активное окно / Весь экран)
         var bottomDock = BuildBottomDock();
+        _bottomDock = (StackPanel)bottomDock;
         rootGrid.Children.Add(bottomDock);
 
         Content = rootGrid;
@@ -270,13 +274,33 @@ public sealed class OverlayWindow : Window
         await EnsureWebViewReadyAsync();
     }
 
-    private void UpdateDrawerSize()
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
-        double screenW = ActualWidth > 0 ? ActualWidth : SystemParameters.PrimaryScreenWidth;
-        double targetRatio = _isDrawerExpanded ? 0.68 : 0.48;
-        double targetW = Math.Clamp(screenW * targetRatio, 760, Math.Max(780, screenW - 60));
-        _lensDrawerCard.Width = targetW;
+        base.OnRenderSizeChanged(sizeInfo);
+        ApplyAdaptiveLayout();
     }
+
+    /// <summary>Пересчитывает размеры панелей от фактического размера окна (разные мониторы, DPI, разрешения).</summary>
+    private void ApplyAdaptiveLayout()
+    {
+        if (_lensDrawerCard == null) return;
+
+        double screenW = ActualWidth > 0 ? ActualWidth : SystemParameters.PrimaryScreenWidth;
+        double screenH = ActualHeight > 0 ? ActualHeight : SystemParameters.PrimaryScreenHeight;
+        double scale = UiMetrics.ChromeScale(screenW, screenH);
+
+        var chromeTransform = new ScaleTransform(scale, scale);
+        _topBar.LayoutTransform = chromeTransform;
+        _bottomDock.LayoutTransform = chromeTransform;
+
+        if (_attachWindowButton != null)
+            UiComponentFactory.SetButtonLabelMaxWidth(_attachWindowButton, UiMetrics.DockLabelMaxWidth(screenW, scale));
+
+        _lensDrawerCard.Width = UiMetrics.DrawerWidth(screenW, _isDrawerExpanded);
+        _lensDrawerCard.Margin = UiMetrics.DrawerMargin(screenW, screenH, scale);
+    }
+
+    private void UpdateDrawerSize() => ApplyAdaptiveLayout();
 
     private void OnOverlayClosed(object? sender, EventArgs e)
     {
@@ -296,7 +320,7 @@ public sealed class OverlayWindow : Window
         }
     }
 
-    private UIElement BuildTopBar()
+    private FrameworkElement BuildTopBar()
     {
         var app = System.Windows.Application.Current;
         var container = new Grid
@@ -321,6 +345,7 @@ public sealed class OverlayWindow : Window
         {
             Text = LocalizationService.T("overlay.hint_drag"),
             Foreground = (System.Windows.Media.Brush)app.Resources["TextPrimaryBrush"],
+            TextTrimming = TextTrimming.CharacterEllipsis,
             FontSize = 13,
             Margin = new Thickness(8, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center
@@ -441,10 +466,8 @@ public sealed class OverlayWindow : Window
         grid.Children.Add(_lensWebView);
 
         _lensDrawerCard = UiComponentFactory.CreateSurfaceCard(grid, 18, new Thickness(12, 10, 12, 12));
-        _lensDrawerCard.Width = 820;
         _lensDrawerCard.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
         _lensDrawerCard.VerticalAlignment = VerticalAlignment.Stretch;
-        _lensDrawerCard.Margin = new Thickness(0, 62, 20, 96);
         _lensDrawerCard.Visibility = Visibility.Collapsed;
         _lensDrawerCard.Cursor = System.Windows.Input.Cursors.Arrow;
 
@@ -468,12 +491,8 @@ public sealed class OverlayWindow : Window
             HorizontalAlignment = System.Windows.HorizontalAlignment.Center
         };
 
-        var winTitleShort = _context.ActiveWindowTitle.Length > 30
-            ? _context.ActiveWindowTitle[..30] + "..."
-            : _context.ActiveWindowTitle;
-
         var attachWinBtn = UiComponentFactory.CreateActionButton(
-            LocalizationService.Tf("overlay.btn_attach_window", winTitleShort),
+            LocalizationService.Tf("overlay.btn_attach_window", _context.ActiveWindowTitle),
             ThemeManager.IconWindow,
             isPrimary: true,
             onClick: async (_, _) =>
@@ -492,6 +511,7 @@ public sealed class OverlayWindow : Window
                 await UploadBytesToEmbeddedLensAsync(_context.FullScreenPngBytes);
             });
 
+        _attachWindowButton = attachWinBtn;
         buttonsRow.Children.Add(attachWinBtn);
         buttonsRow.Children.Add(attachScreenBtn);
 

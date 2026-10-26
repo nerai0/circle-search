@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "デスクトップ",
   "app.title": "CircleSearch 画面検索",
   "app.subtitle": "Windows 向け かこって検索 (Circle to Search)",
   "tray.open_overlay": "オーバーレイを開く (Win長押し / Alt+Space)",

@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "桌面",
   "app.title": "CircleSearch 屏幕搜索",
   "app.subtitle": "Windows 版即圈即搜 (Circle to Search)",
   "tray.open_overlay": "打开屏幕搜索 (长按 Win / Alt+Space)",

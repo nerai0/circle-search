@@ -46,6 +46,8 @@ public static class UiComponentFactory
                 Foreground = fg,
                 FontSize = 13,
                 FontWeight = FontWeights.Medium,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                TextWrapping = TextWrapping.NoWrap,
                 VerticalAlignment = VerticalAlignment.Center
             });
         }
@@ -91,6 +93,17 @@ public static class UiComponentFactory
             btn.Click += onClick;
 
         return btn;
+    }
+
+    /// <summary>Ограничивает ширину подписи кнопки: длинный текст обрезается с многоточием, полный — в подсказке.</summary>
+    public static void SetButtonLabelMaxWidth(System.Windows.Controls.Button button, double maxWidth)
+    {
+        if (button.Content is Border { Child: StackPanel panel } &&
+            panel.Children.OfType<TextBlock>().LastOrDefault() is { } label)
+        {
+            label.MaxWidth = maxWidth;
+            if (button.ToolTip == null) button.ToolTip = label.Text;
+        }
     }
 
     public static Border CreateSurfaceCard(UIElement child, double cornerRadius = 16, Thickness? padding = null)

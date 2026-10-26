@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "Жұмыс үстелі",
   "app.title": "CircleSearch Экраннан Іздеу",
   "app.subtitle": "Windows-қа арналған Circle to Search",
   "tray.open_overlay": "Оверлейді ашу (Win ұстап тұру / Alt+Space)",

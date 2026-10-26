@@ -23,10 +23,15 @@ public static class ConfigManager
 
     public static event Action? SettingsChanged;
 
+    /// <summary>Переменная окружения для переопределения каталога настроек (используется в тестах и portable-режиме).</summary>
+    public const string ConfigDirEnvVar = "CIRCLESEARCH_CONFIG_DIR";
+
     static ConfigManager()
     {
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var dir = Path.Combine(appData, "CircleSearch");
+        var overrideDir = Environment.GetEnvironmentVariable(ConfigDirEnvVar);
+        var dir = !string.IsNullOrWhiteSpace(overrideDir)
+            ? overrideDir
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CircleSearch");
         Directory.CreateDirectory(dir);
         ConfigFilePath = Path.Combine(dir, "settings.json");
         Load();
@@ -67,8 +72,7 @@ public static class ConfigManager
             var candidates = new[]
             {
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env"),
-                Path.Combine(Directory.GetCurrentDirectory(), ".env"),
-                Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "..", ".env"))
+                Path.Combine(Directory.GetCurrentDirectory(), ".env")
             };
 
             foreach (var path in candidates)

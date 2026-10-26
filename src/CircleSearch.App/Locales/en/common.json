@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "Desktop",
   "app.title": "CircleSearch Screen Search",
   "app.subtitle": "Circle to Search for Windows",
   "tray.open_overlay": "Open Overlay (Hold Win / Alt+Space)",

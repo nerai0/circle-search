@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "바탕 화면",
   "app.title": "CircleSearch 화면 검색",
   "app.subtitle": "Windows용 서클 투 서치 (Circle to Search)",
   "tray.open_overlay": "오버레이 열기 (Win 길게 누르기 / Alt+Space)",

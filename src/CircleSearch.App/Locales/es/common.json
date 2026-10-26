@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "Escritorio",
   "app.title": "CircleSearch Búsqueda en Pantalla",
   "app.subtitle": "Circle to Search para Windows",
   "tray.open_overlay": "Abrir superposición (Mantener Win / Alt+Espacio)",

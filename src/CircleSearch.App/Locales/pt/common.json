@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "Área de trabalho",
   "app.title": "CircleSearch Pesquisa na Tela",
   "app.subtitle": "Circle to Search para Windows",
   "tray.open_overlay": "Abrir sobreposição (Segurar Win / Alt+Espaço)",

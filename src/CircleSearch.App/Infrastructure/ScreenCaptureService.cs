@@ -126,7 +126,8 @@ public static class ScreenCaptureService
             }
         }
 
-        return System.Windows.Forms.Screen.PrimaryScreen?.Bounds ?? new Rectangle(0, 0, 1920, 1080);
+        return System.Windows.Forms.Screen.PrimaryScreen?.Bounds
+            ?? System.Windows.Forms.SystemInformation.VirtualScreen;
     }
 
     private static Bitmap CapturePhysicalRectangle(Rectangle rect)
@@ -225,7 +226,7 @@ public static class ScreenCaptureService
         }
 
         if (string.IsNullOrWhiteSpace(activeTitle))
-            activeTitle = "Рабочий стол";
+            activeTitle = Services.LocalizationService.T("overlay.desktop_title");
 
         return new CapturedScreenContext
         {

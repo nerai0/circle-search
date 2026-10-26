@@ -1,4 +1,5 @@
 {
+  "overlay.desktop_title": "Рабочий стол",
   "app.title": "CircleSearch Экранный Поиск",
   "app.subtitle": "Circle to Search для Windows",
   "tray.open_overlay": "Вызвать оверлей (Удержание Win / Alt+Space)",

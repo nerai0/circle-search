@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace CircleSearch.UI;
@@ -16,12 +18,54 @@ public static class ThemeManager
     public const string IconSettings = "M19.14,12.94 C19.18,12.64 19.2,12.33 19.2,12 C19.2,11.68 19.18,11.36 19.13,11.06 L21.16,9.48 C21.34,9.34 21.39,9.07 21.28,8.87 L19.36,5.55 C19.24,5.33 18.99,5.26 18.77,5.33 L16.38,6.29 C15.88,5.91 15.35,5.59 14.76,5.35 L14.4,2.81 C14.36,2.57 14.16,2.4 13.92,2.4 L10.08,2.4 C9.84,2.4 9.65,2.57 9.61,2.81 L9.25,5.35 C8.66,5.59 8.12,5.92 7.63,6.29 L5.24,5.33 C5.02,5.25 4.77,5.33 4.65,5.55 L2.74,8.87 C2.62,9.08 2.66,9.34 2.86,9.48 L4.89,11.06 C4.84,11.36 4.8,11.69 4.8,12 C4.8,12.31 4.82,12.64 4.87,12.94 L2.84,14.52 C2.66,14.66 2.61,14.93 2.72,15.13 L4.64,18.45 C4.76,18.67 5.01,18.74 5.23,18.67 L7.62,17.71 C8.12,18.09 8.65,18.41 9.24,18.65 L9.6,21.19 C9.65,21.43 9.84,21.6 10.08,21.6 L13.92,21.6 C14.16,21.6 14.36,21.43 14.39,21.19 L14.75,18.65 C15.34,18.41 15.88,18.09 16.37,17.71 L18.76,18.67 C18.98,18.75 19.23,18.67 19.35,18.45 L21.27,15.13 C21.39,14.91 21.34,14.66 21.15,14.52 L19.14,12.94 Z M12,15.6 C10.02,15.6 8.4,13.98 8.4,12 C8.4,10.02 10.02,8.4 12,8.4 C13.98,8.4 15.6,10.02 15.6,12 C15.6,13.98 13.98,15.6 12,15.6 Z";
     public const string IconClose = "M19,6.41 L17.59,5 L12,10.59 L6.41,5 L5,6.41 L10.59,12 L5,17.59 L6.41,19 L12,13.41 L17.59,19 L19,17.59 L13.41,12 L19,6.41 Z";
 
+    public static bool IsDark { get; private set; } = true;
+
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
+
+    private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+    private const int DWMWA_CAPTION_COLOR = 35;
+
+    /// <summary>Возвращает цвет токена темы для WinForms/GDI+ (например, меню в трее).</summary>
+    public static System.Drawing.Color GetDrawingColor(string brushKey)
+    {
+        if (System.Windows.Application.Current?.Resources[brushKey] is SolidColorBrush brush)
+        {
+            var c = brush.Color;
+            return System.Drawing.Color.FromArgb(c.A, c.R, c.G, c.B);
+        }
+        return System.Drawing.Color.Gray;
+    }
+
+    /// <summary>Подгоняет системную рамку окна (заголовок) под текущую тему.</summary>
+    public static void ApplyWindowChrome(Window window)
+    {
+        try
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+            if (hwnd == IntPtr.Zero) return;
+
+            int dark = IsDark ? 1 : 0;
+            DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
+
+            var bg = GetDrawingColor("BgPrimaryBrush");
+            int captionColor = bg.R | (bg.G << 8) | (bg.B << 16);
+            DwmSetWindowAttribute(hwnd, DWMWA_CAPTION_COLOR, ref captionColor, sizeof(int));
+        }
+        catch
+        {
+            // Старые версии Windows не поддерживают эти атрибуты — остаётся системный заголовок
+        }
+    }
+
     public static void ApplyTheme(string themeName)
     {
         var app = System.Windows.Application.Current;
         if (app == null) return;
 
-        bool isDark = !string.Equals(themeName, "Light", StringComparison.OrdinalIgnoreCase);
+        ThemeStyles.EnsureLoaded(app);
+        IsDark = !string.Equals(themeName, "Light", StringComparison.OrdinalIgnoreCase);
+        bool isDark = IsDark;
 
         // RoyalBlue (#4169E1) как основной акцентный цвет
         SetBrush(app, "PrimaryBrush", "#4169E1");
@@ -33,6 +77,7 @@ public static class ThemeManager
             SetBrush(app, "BgPrimaryBrush", "#16181D");
             SetBrush(app, "BgSurfaceBrush", "#20232A");
             SetBrush(app, "BgElevatedBrush", "#2B2F3A");
+            SetBrush(app, "BgHoverBrush", "#363B49");
             SetBrush(app, "TextPrimaryBrush", "#F1F3F4");
             SetBrush(app, "TextSecondaryBrush", "#9AA0A6");
             SetBrush(app, "TranslationBadgeBgBrush", "#E816181D");
@@ -43,6 +88,7 @@ public static class ThemeManager
             SetBrush(app, "BgPrimaryBrush", "#F8F9FA");
             SetBrush(app, "BgSurfaceBrush", "#FFFFFF");
             SetBrush(app, "BgElevatedBrush", "#EEF1F6");
+            SetBrush(app, "BgHoverBrush", "#E1E6EF");
             SetBrush(app, "TextPrimaryBrush", "#202124");
             SetBrush(app, "TextSecondaryBrush", "#5F6368");
             SetBrush(app, "TranslationBadgeBgBrush", "#F2FFFFFF");

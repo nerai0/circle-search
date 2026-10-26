@@ -8,6 +8,9 @@ namespace CircleSearch.Services;
 
 public static class GoogleLensService
 {
+    public const string UploadEndpoint = "https://lens.google.com/upload?ep=ccm&s=&hl=";
+    public const string FallbackUrl = "https://www.google.com/";
+
     public static byte[] ConvertToOptimizedJpeg(byte[] pngBytes, long quality = 90L)
     {
         try
@@ -36,6 +39,10 @@ public static class GoogleLensService
         }
     }
 
+    /// <summary>Google ожидает региональный код для китайского: zh -> zh-CN (упрощённый), остальные коды совпадают.</summary>
+    public static string ToGoogleLanguageCode(string appLanguage) =>
+        appLanguage.Equals("zh", StringComparison.OrdinalIgnoreCase) ? "zh-CN" : appLanguage;
+
     public static string BuildAutoSubmitHtml(byte[] imageBytes, bool isJpeg = false)
     {
         var base64 = Convert.ToBase64String(imageBytes);
@@ -47,6 +54,7 @@ public static class GoogleLensService
         {
             hl = LocalizationService.CurrentLanguage;
         }
+        hl = ToGoogleLanguageCode(hl);
 
         var loadingText = LocalizationService.T("overlay.lens_loading");
 
@@ -93,7 +101,7 @@ public static class GoogleLensService
     <div class="spinner"></div>
     <span>{{loadingText}}</span>
   </div>
-  <form id="lensForm" method="POST" action="https://lens.google.com/upload?ep=ccm&s=&hl={{hl}}" enctype="multipart/form-data">
+  <form id="lensForm" method="POST" action="{{UploadEndpoint}}{{hl}}" enctype="multipart/form-data">
     <input type="file" id="lensFile" name="encoded_image" style="display:none;" />
   </form>
   <script>
@@ -116,7 +124,7 @@ public static class GoogleLensService
 
         document.getElementById("lensForm").submit();
       } catch (e) {
-        window.location.replace("https://www.google.com/?olud");
+        window.location.replace("{{FallbackUrl}}");
       }
     })();
   </script>
@@ -160,17 +168,15 @@ public static class GoogleLensService
 
     public static void OpenBrowserFileOrUrl(string filePathOrUrl)
     {
-        // 1. Сначала пытаемся запустить в установленном Google Chrome (родной браузер для Lens)
+        // 1. Запускаем браузер, выбранный пользователем в Windows по умолчанию (любой: Chrome, Edge, Firefox, Brave...)
         try
         {
-            using var chromeKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")
-                               ?? Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe");
-            var chromeExe = chromeKey?.GetValue("") as string;
-            if (!string.IsNullOrWhiteSpace(chromeExe) && File.Exists(chromeExe))
+            var browserExe = Infrastructure.DefaultBrowserResolver.ResolveExecutablePath();
+            if (browserExe != null)
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = chromeExe,
+                    FileName = browserExe,
                     Arguments = $"\"{filePathOrUrl}\"",
                     UseShellExecute = false
                 });
@@ -179,10 +185,10 @@ public static class GoogleLensService
         }
         catch (Exception ex)
         {
-            Infrastructure.AppLogger.Warning($"Failed to start Chrome directly: {ex.Message}");
+            Infrastructure.AppLogger.Warning("Failed to start default browser directly", new { ex.Message });
         }
 
-        // 2. Иначе открываем системный браузер по умолчанию через ShellExecute
+        // 2. Если браузер определить не удалось — отдаём файл/URL системе (ShellExecute)
         try
         {
             Process.Start(new ProcessStartInfo
