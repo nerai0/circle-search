@@ -19,14 +19,14 @@ $MsiVersion = if (($Version -split '\.').Count -lt 4) { "$Version.0" } else { $V
 Write-Host "=== 1. Running Unit Tests ===" -ForegroundColor Cyan
 dotnet run --project "$RootDir\tests\CircleSearch.Tests\CircleSearch.Tests.csproj" -c Release
 
-Write-Host "=== 2. Publishing Self-Contained Win-x64 Release (v$Version) ===" -ForegroundColor Cyan
+Write-Host "=== 2. Publishing Framework-Dependent Win-x64 Release (v$Version) ===" -ForegroundColor Cyan
 if (Test-Path $PublishDir) { Remove-Item $PublishDir -Recurse -Force }
 if (!(Test-Path $DistDir)) { New-Item -ItemType Directory -Path $DistDir | Out-Null }
 
 dotnet publish $AppProject `
     -c Release `
     -r win-x64 `
-    --self-contained true `
+    --self-contained false `
     -p:PublishSingleFile=false `
     -p:Version=$Version `
     -p:DebugType=None `
