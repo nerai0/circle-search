@@ -1,16 +1,16 @@
 <div align="center">
 
-<img src="assets/icon.png" width="112" alt="CircleSearch" />
+<img src="../../assets/icon.png" width="112" alt="CircleSearch" />
 
 # 🔍 Windows-қа арналған CircleSearch
 ### Windows 10 & 11 жүйелерінде жылдам әрі ыңғайлы Circle to Search мүмкіндігі
 
 [![Release](https://img.shields.io/github/v/release/nerai0/circle-search?style=flat-square&color=4169E1)](https://github.com/nerai0/circle-search/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](../../LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078D6?style=flat-square&logo=windows)](https://github.com/nerai0/circle-search)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 
-[**English**](README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md) | [**Español**](README.es.md) | [**Deutsch**](README.de.md) | [**Français**](README.fr.md) | [**Português**](README.pt.md) | [**Türkçe**](README.tr.md) | [**Українська**](README.uk.md) | [**中文**](README.zh.md) | [**日本語**](README.ja.md) | [**한국어**](README.ko.md)
+[**English**](../../README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md) | [**Español**](README.es.md) | [**Deutsch**](README.de.md) | [**Français**](README.fr.md) | [**Português**](README.pt.md) | [**Türkçe**](README.tr.md) | [**Українська**](README.uk.md) | [**中文**](README.zh.md) | [**日本語**](README.ja.md) | [**한국어**](README.ko.md)
 
 </div>
 
@@ -85,7 +85,7 @@ powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1   # versi
 ## ⚙️ Баптау
 
 - Баптаулар `%LocalAppData%\CircleSearch\settings.json` файлында сақталады және **Баптаулар** терезесінде өзгертіледі (трей белгішесі → тінтуірдің оң жағы).
-- `CircleSearch.exe` жанындағы міндетті емес `.env` файлы бастапқы мәндерді береді, [`.env.example`](.env.example) қараңыз. Баптауларда сақталған мәндердің басымдығы жоғары.
+- `CircleSearch.exe` жанындағы міндетті емес `.env` файлы бастапқы мәндерді береді, [`.env.example`](../../.env.example) қараңыз. Баптауларда сақталған мәндердің басымдығы жоғары.
 - `CIRCLESEARCH_CONFIG_DIR` айнымалысы баптаулар қалтасын ауыстырады.
 - Іздеу сыртқы терезеде ашылғанда Windows-та таңдалған **әдепкі браузер** қолданылады.
 
@@ -109,4 +109,4 @@ installer/                  # WiX MSI + build-release.ps1
 
 ## 📄 Лицензия
 
-[MIT License](LICENSE) бойынша таратылады. Жеке және коммерциялық мақсатта пайдалануға толықтай ашық және еркін.
+[MIT License](../../LICENSE) бойынша таратылады. Жеке және коммерциялық мақсатта пайдалануға толықтай ашық және еркін.

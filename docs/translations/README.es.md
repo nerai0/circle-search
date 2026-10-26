@@ -1,16 +1,16 @@
 <div align="center">
 
-<img src="assets/icon.png" width="112" alt="CircleSearch" />
+<img src="../../assets/icon.png" width="112" alt="CircleSearch" />
 
 # 🔍 CircleSearch para Windows
 ### La experiencia nativa y rápida de Circle to Search en Windows 10 y 11
 
 [![Release](https://img.shields.io/github/v/release/nerai0/circle-search?style=flat-square&color=4169E1)](https://github.com/nerai0/circle-search/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](../../LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078D6?style=flat-square&logo=windows)](https://github.com/nerai0/circle-search)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 
-[**English**](README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md) | [**Español**](README.es.md) | [**Deutsch**](README.de.md) | [**Français**](README.fr.md) | [**Português**](README.pt.md) | [**Türkçe**](README.tr.md) | [**Українська**](README.uk.md) | [**中文**](README.zh.md) | [**日本語**](README.ja.md) | [**한국어**](README.ko.md)
+[**English**](../../README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md) | [**Español**](README.es.md) | [**Deutsch**](README.de.md) | [**Français**](README.fr.md) | [**Português**](README.pt.md) | [**Türkçe**](README.tr.md) | [**Українська**](README.uk.md) | [**中文**](README.zh.md) | [**日本語**](README.ja.md) | [**한국어**](README.ko.md)
 
 </div>
 
@@ -84,7 +84,7 @@ powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1
 ## ⚙️ Configuración
 
 - La configuración se almacena en `%LocalAppData%\CircleSearch\settings.json` y se edita en **Ajustes** (clic derecho en el icono de la bandeja del sistema).
-- Un archivo `.env` opcional junto a `CircleSearch.exe` permite definir valores predeterminados (ver [`.env.example`](.env.example)).
+- Un archivo `.env` opcional junto a `CircleSearch.exe` permite definir valores predeterminados (ver [`.env.example`](../../.env.example)).
 - `CIRCLESEARCH_CONFIG_DIR` permite cambiar la carpeta de configuración.
 - Al abrir una búsqueda en el navegador externo, se utiliza el navegador predeterminado de Windows.
 
@@ -92,4 +92,4 @@ powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1
 
 ## 📄 Licencia
 
-Distribuido bajo la [Licencia MIT](LICENSE). Código abierto y gratuito para uso personal y comercial.
+Distribuido bajo la [Licencia MIT](../../LICENSE). Código abierto y gratuito para uso personal y comercial.

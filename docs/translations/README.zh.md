@@ -1,16 +1,16 @@
 <div align="center">
 
-<img src="assets/icon.png" width="112" alt="CircleSearch" />
+<img src="../../assets/icon.png" width="112" alt="CircleSearch" />
 
 # 🔍 CircleSearch for Windows
 ### Windows 10 与 11 上的原生极速 Circle to Search 体验
 
 [![Release](https://img.shields.io/github/v/release/nerai0/circle-search?style=flat-square&color=4169E1)](https://github.com/nerai0/circle-search/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](../../LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078D6?style=flat-square&logo=windows)](https://github.com/nerai0/circle-search)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
 
-[**English**](README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md) | [**Español**](README.es.md) | [**Deutsch**](README.de.md) | [**Français**](README.fr.md) | [**Português**](README.pt.md) | [**Türkçe**](README.tr.md) | [**Українська**](README.uk.md) | [**中文**](README.zh.md) | [**日本語**](README.ja.md) | [**한국어**](README.ko.md)
+[**English**](../../README.md) | [**Қазақша**](README.kk.md) | [**Русский**](README.ru.md) | [**Español**](README.es.md) | [**Deutsch**](README.de.md) | [**Français**](README.fr.md) | [**Português**](README.pt.md) | [**Türkçe**](README.tr.md) | [**Українська**](README.uk.md) | [**中文**](README.zh.md) | [**日本語**](README.ja.md) | [**한국어**](README.ko.md)
 
 </div>
 
@@ -84,7 +84,7 @@ powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1
 ## ⚙️ 配置说明
 
 - 配置文件保存在 `%LocalAppData%\CircleSearch\settings.json`，可在托盘图标右键菜单的 **Settings** 中设置。
-- 根目录可选放置 `.env` 提供初始默认项，详见 [`.env.example`](.env.example)。
+- 根目录可选放置 `.env` 提供初始默认项，详见 [`.env.example`](../../.env.example)。
 - 支持通过 `CIRCLESEARCH_CONFIG_DIR` 环境变量自定义配置存储路径。
 - 在外部打开搜索时，自动调用 Windows 系统设置中的**默认浏览器**。
 
@@ -92,4 +92,4 @@ powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1
 
 ## 📄 开源许可证
 
-本项目基于 [MIT License](LICENSE) 开源发布，完全免费，支持个人及商业使用。
+本项目基于 [MIT License](../../LICENSE) 开源发布，完全免费，支持个人及商业使用。
