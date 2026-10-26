@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/icon.png" width="112" alt="CircleSearch" />
+
 # 🔍 CircleSearch для Windows
 ### Быстрый и удобный Circle to Search для Windows 10 & 11
 
@@ -34,12 +36,12 @@
 ## 📥 Скачивание и установка
 
 ### Вариант 1: Установщик Windows (`.msi`) — *Рекомендуется*
-Скачайте актуальный **`CircleSearch-v1.0.1-win-x64.msi`** из раздела [**Releases**](https://github.com/nerai0/circle-search/releases).
+Скачайте актуальный **`CircleSearch-v<version>-win-x64.msi`** из раздела [**Releases**](https://github.com/nerai0/circle-search/releases).
 - Установка выполняется в профиль пользователя (права администратора не требуются).
 - Автоматически создает ярлыки в меню «Пуск» и на рабочем столе с иконкой приложения.
 
 ### Вариант 2: Портативный архив (`.zip`)
-Скачайте **`CircleSearch-v1.0.1-win-x64-portable.zip`**, распакуйте в любую папку и запустите `CircleSearch.exe`.
+Скачайте **`CircleSearch-v<version>-win-x64-portable.zip`**, распакуйте в любую папку и запустите `CircleSearch.exe`.
 
 ---
 
@@ -72,8 +74,33 @@ cd circle-search
 dotnet run --project src/CircleSearch.App/CircleSearch.App.csproj
 
 # Сборка .msi инсталлятора и портативного .zip
-powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1 -Version 1.0.1
+powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1   # version is read from CircleSearch.App.csproj
 ```
+
+---
+
+## ⚙️ Настройка
+
+- Настройки хранятся в `%LocalAppData%\CircleSearch\settings.json` и меняются в окне **Настройки** (значок в трее → правая кнопка мыши).
+- Необязательный `.env` рядом с `CircleSearch.exe` задаёт начальные значения, см. [`.env.example`](.env.example). Значения, сохранённые в настройках, приоритетнее.
+- Переменная `CIRCLESEARCH_CONFIG_DIR` переопределяет папку настроек.
+- Для открытия поиска во внешнем окне используется **браузер по умолчанию**, выбранный в Windows.
+
+## 🧱 Структура проекта
+
+```text
+src/CircleSearch.App/
+├── Domain/          # settings (ConfigManager)
+├── Infrastructure/  # Win32: capture, keyboard hook, autostart, default browser, logging
+├── Services/        # Google Lens integration, localization
+├── UI/              # theme tokens and styles, adaptive metrics, overlay/settings windows, components
+├── Locales/         # <lang>/common.json (12 languages)
+└── Resources/       # application icon
+tests/CircleSearch.Tests/   # console test runner
+installer/                  # WiX MSI + build-release.ps1
+```
+
+Запуск тестов: `dotnet run --project tests/CircleSearch.Tests -c Release`
 
 ---
 

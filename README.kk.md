@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/icon.png" width="112" alt="CircleSearch" />
+
 # 🔍 Windows-қа арналған CircleSearch
 ### Windows 10 & 11 жүйелерінде жылдам әрі ыңғайлы Circle to Search мүмкіндігі
 
@@ -34,12 +36,12 @@
 ## 📥 Жүктеп алу және орнату
 
 ### 1-нұсқа: Windows орнатқышы (`.msi`) — *Ұсынылады*
-[**Releases**](https://github.com/nerai0/circle-search/releases) бетінен соңғы **`CircleSearch-v1.0.1-win-x64.msi`** файлын жүктеп алыңыз.
+[**Releases**](https://github.com/nerai0/circle-search/releases) бетінен соңғы **`CircleSearch-v<version>-win-x64.msi`** файлын жүктеп алыңыз.
 - Әкімші құқығын талап етпейді (пайдаланушы профиліне орнатылады).
 - «Пуск» мәзірі мен жұмыс үстеліне әдемі иконкасы бар жарлықтарды автоматты түрде қосады.
 
 ### 2-нұсқа: Тасымалды нұсқа (`.zip`)
-**`CircleSearch-v1.0.1-win-x64-portable.zip`** файлын жүктеп алып, кез келген бумаға шығарыңыз және `CircleSearch.exe` іске қосыңыз.
+**`CircleSearch-v<version>-win-x64-portable.zip`** файлын жүктеп алып, кез келген бумаға шығарыңыз және `CircleSearch.exe` іске қосыңыз.
 
 ---
 
@@ -72,8 +74,33 @@ cd circle-search
 dotnet run --project src/CircleSearch.App/CircleSearch.App.csproj
 
 # .msi орнатқышы мен тасымалды .zip құрастыру
-powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1 -Version 1.0.1
+powershell -ExecutionPolicy Bypass -File .\installer\build-release.ps1   # version is read from CircleSearch.App.csproj
 ```
+
+---
+
+## ⚙️ Баптау
+
+- Баптаулар `%LocalAppData%\CircleSearch\settings.json` файлында сақталады және **Баптаулар** терезесінде өзгертіледі (трей белгішесі → тінтуірдің оң жағы).
+- `CircleSearch.exe` жанындағы міндетті емес `.env` файлы бастапқы мәндерді береді, [`.env.example`](.env.example) қараңыз. Баптауларда сақталған мәндердің басымдығы жоғары.
+- `CIRCLESEARCH_CONFIG_DIR` айнымалысы баптаулар қалтасын ауыстырады.
+- Іздеу сыртқы терезеде ашылғанда Windows-та таңдалған **әдепкі браузер** қолданылады.
+
+## 🧱 Жоба құрылымы
+
+```text
+src/CircleSearch.App/
+├── Domain/          # settings (ConfigManager)
+├── Infrastructure/  # Win32: capture, keyboard hook, autostart, default browser, logging
+├── Services/        # Google Lens integration, localization
+├── UI/              # theme tokens and styles, adaptive metrics, overlay/settings windows, components
+├── Locales/         # <lang>/common.json (12 languages)
+└── Resources/       # application icon
+tests/CircleSearch.Tests/   # console test runner
+installer/                  # WiX MSI + build-release.ps1
+```
+
+Тестілерді іске қосу: `dotnet run --project tests/CircleSearch.Tests -c Release`
 
 ---
 

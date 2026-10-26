@@ -1,0 +1,9 @@
+# Нормализация окончаний строк: в репозитории всегда LF, в рабочей копии — по настройкам ОС
+* text=auto
+
+*.ico binary
+*.png binary
+*.msi binary
+*.zip binary
+
+*.ps1 text eol=crlf
