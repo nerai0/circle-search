@@ -35,6 +35,8 @@ nul
 *.log
 *.dump
 *.sql
+*.bat
+*.cmd
 TestResults/
 publish/
 dist/
